@@ -1,4 +1,5 @@
-# xradio
+# Intro
+
 This is an experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port. It is supposed to replace the driver provided by armbian which is not supported anymore.
 Most of all, this is work in progress.
 
@@ -30,15 +31,13 @@ To use this driver with armbian add a couple of lines to sun8i-h2-plus-orangepi-
 
 # Kernel Module
 
-place `xradio_wlan.ko` to your modules folder (for archlinux: `/lib/modules/<kernel-version>/kernel/drivers/net/wireless/xradio`)
+place `xradio_wlan.ko` to your modules folder (for armbian: `/lib/modules/<kernel-version>/kernel/drivers/net/wireless/xradio`)
 
 # Firmware
 
-Don't forget to take [firmware binaries from somewhere] (https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819): `boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin` and place it to `/lib/firmware/xr819/`
+Don't forget to take [firmware binaries from somewhere] (https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819): `boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin` and place it to your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 # What works, what doesn't
-
-Working:
 
 Standard client station mode seems to work fine.
 Master (AP) mode works with WPA/WPA2 enabled etc.
