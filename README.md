@@ -1,9 +1,6 @@
 # xradio
-Experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port.
-
-# READ THIS
-
-This experimental port is is ment to replace the driver provided by armbian which is not supported anymore.
+This is an experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port. It is supposed to replace the driver provided by armbian which is not supported anymore.
+Most of all, this is work in progress.
 
 # Building
 
@@ -16,9 +13,6 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$
 
 # How to use this
 
-You need to specify one or two regulators for the xr819's 1.8v and 3.3v supplies in your device tree.
-(for example, at: `.../linux_sources/linux-4.12-rc5/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts`)
-
 To use this driver with armbian add a couple of lines to sun8i-h2-plus-orangepi-zero.dts (e.g. by adding a corresponding git diff to a userpatch):
 
 ```
@@ -27,12 +21,9 @@ To use this driver with armbian add a couple of lines to sun8i-h2-plus-orangepi-
 	xr819: sdio_wifi@1 {
                 reg = <1>;
                 compatible = "xradio,xr819";
-		/* pinctrl-names = "default"; */
-                /* pinctrl-0 = <&wifi_wake>;  */
                 interrupt-parent = <&pio>;
 		interrupts = <6 10 IRQ_TYPE_EDGE_RISING>;
 		interrupt-names = "host-wake";
-		local-mac-address = [dc 44 6d c0 ff ee]; 
 	};
 };
 ```
@@ -43,7 +34,7 @@ place `xradio_wlan.ko` to your modules folder (for archlinux: `/lib/modules/<ker
 
 # Firmware
 
-Don't forget to take [firmware binaries from somewhere](https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819): `boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin` (for archlunux place it to `/lib/firmware/xr819/`)
+Don't forget to take [firmware binaries from somewhere] (https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819): `boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin` and place it to `/lib/firmware/xr819/`
 
 # What works, what doesn't
 
