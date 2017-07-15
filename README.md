@@ -35,13 +35,17 @@ place `xradio_wlan.ko` to your modules folder (for armbian: `/lib/modules/<kerne
 
 # Firmware
 
-Don't forget to take [firmware binaries from somewhere] (https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819): `boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin` and place it to your firmware folder (for armbian: `/lib/firmware/xr819/`)
+Get firmware binaries from somewhere, e.g. https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819 (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 # What works, what doesn't
 
-Standard client station mode seems to work fine.
+Tested with:
+Kernel version 4.11.x
+Armbian version 5.32 
+Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled etc.
 Dual role station and master mode.
+Don't expect throughputs substantially exceeding 10 Mbit/s.
 
 # Issues
 
@@ -57,6 +61,8 @@ Pings from the device to the network are faster than from the network to the dev
 This seems to be because of latency between the interrupt and servicing RX reports
 from the device.
 
+(Source: https://github.com/Icenowy/xradio, https://github.com/fifteenhex/xradio)
+
 # Fun stuff
 
 The driver is based on the driver for the ST CW1100/CW1200 chips.
@@ -71,3 +77,6 @@ maybe Allwinner bought the design after the ST/Ericsson split?
 If anyone wants to mainline support for the XR819 they should probably do it by
 adding support for the XR819 to the existing CW1200 driver so they don't have to
 get thousands and thousands of lines of code signed off.
+
+(Source: https://github.com/Icenowy/xradio, https://github.com/fifteenhex/xradio)
+
