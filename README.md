@@ -36,7 +36,7 @@ place `xradio_wlan.ko` to your modules folder (for armbian: `/lib/modules/<kerne
 
 # Firmware
 
-Get firmware binaries from somewhere, e.g. https://github.com/armbian/build/tree/master/bin/firmware-overlay/xr819 (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
+Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 # What works, what doesn't
 
