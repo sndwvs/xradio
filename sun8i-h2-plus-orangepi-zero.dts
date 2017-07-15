@@ -123,6 +123,14 @@
 	status = "okay";
 };
 
+&pio {
+	wifi_wake_xr819: wifi_wake_xr819@0 {
+		allwinner,pins = "PG10";
+                allwinner,function = "irq";
+                allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+	};
+};
+
 &mmc1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&mmc1_pins_a>;
@@ -132,15 +140,18 @@
 	non-removable;
 	status = "okay";
 
+	/*
+	 * Explicitly define the sdio device, so that we can add an ethernet
+	 * alias for it (which e.g. makes u-boot set a mac-address).
+	 */
 	xr819: sdio_wifi@1 {
-                reg = <1>;
-                compatible = "xradio,xr819";
-		/* pinctrl-names = "default"; */
-                /* pinctrl-0 = <&wifi_wake>;  */
-                interrupt-parent = <&pio>;
+		reg = <1>;
+		compatible = "xradio,xr819";
+		pinctrl-names = "default";
+		pinctrl-0 = <&wifi_wake_xr819>;
+		interrupt-parent = <&pio>;
 		interrupts = <6 10 IRQ_TYPE_EDGE_RISING>;
 		interrupt-names = "host-wake";
-		local-mac-address = [dc 44 6d c0 ff ee]; 
 	};
 };
 
