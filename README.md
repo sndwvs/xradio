@@ -1,6 +1,7 @@
-# xradio
+# xradio xr819
 
 This is an experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port. It is supposed to replace the driver provided by armbian which is not supported anymore.
+
 Most of all, this is work in progress.
 
 # Building
@@ -40,8 +41,10 @@ Get firmware binaries from somewhere, e.g. https://github.com/armbian/build/tree
 # What works, what doesn't
 
 Tested with:
-Kernel version 4.11.x
-Armbian version 5.32 
+
+	Kernel version 4.11.x
+	Armbian version 5.32 
+
 Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled etc.
 Dual role station and master mode.
