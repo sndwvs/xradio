@@ -8,6 +8,23 @@
 #include "bh.h"
 #include "ap.h"
 
+	// MRK: added copy of this tx.c function here for testing
+
+static void xradio_check_go_neg_conf_success(struct xradio_common *hw_priv,
+						u8 *action)
+{
+	if (action[2] == 0x50 && action[3] == 0x6F && action[4] == 0x9A &&
+		action[5] == 0x09 && action[6] == 0x02) {
+		if(action[17] == 0) {
+			hw_priv->is_go_thru_go_neg = true;
+		}
+		else {
+			hw_priv->is_go_thru_go_neg = false;
+		}
+	}
+}
+
+
 static int xradio_handle_pspoll(struct xradio_vif *priv,
 				struct sk_buff *skb)
 {
@@ -202,7 +219,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 #endif
        
 	if (arg->rxedRate >= 14) {
-		hdr->flag |= RX_ENC_HT;
+		hdr->flag |= RX_FLAG_HT;
 		hdr->rate_idx = arg->rxedRate - 14;
 	} else if (arg->rxedRate >= 4) {
 		if (hdr->band == NL80211_BAND_5GHZ)
