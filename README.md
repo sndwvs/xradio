@@ -1,4 +1,4 @@
-# Intro
+# xradio
 
 This is an experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port. It is supposed to replace the driver provided by armbian which is not supported anymore.
 Most of all, this is work in progress.
