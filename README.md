@@ -1,6 +1,6 @@
-# xradio xr819
+# xradio xr819 driver 
 
-This is an experimental xradio xr819 driver for the Orange Pi Zero based on fifteenhex' port. It is supposed to replace the driver provided by armbian which is not supported anymore.
+This is an experimental xradio xr819 driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian which is not supported anymore.
 
 Most of all, this is work in progress.
 
@@ -15,20 +15,8 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$
 
 # How to use this
 
-To use this driver with armbian add a couple of lines to sun8i-h2-plus-orangepi-zero.dts (e.g. by adding a corresponding git diff to a userpatch):
-
-```
-&mmc1 {
-	...
-	xr819: sdio_wifi@1 {
-                reg = <1>;
-                compatible = "xradio,xr819";
-                interrupt-parent = <&pio>;
-		interrupts = <6 10 IRQ_TYPE_EDGE_RISING>;
-		interrupt-names = "host-wake";
-	};
-};
-```
+To use this driver with armbian add a couple of lines to sun8i-h2-plus-orangepi-zero.dts (e.g. by adding a corresponding git diff to a userpatch). See here
+https://github.com/karabek/xradio/blob/master/sun8i-h2-plus-orangepi-zero.dts
 
 # Kernel Module
 
@@ -36,7 +24,7 @@ place `xradio_wlan.ko` to your modules folder (for armbian: `/lib/modules/<kerne
 
 # Firmware
 
-Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
+Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 # What works, what doesn't
 
