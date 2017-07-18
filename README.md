@@ -1,10 +1,10 @@
 # Driver for the Allwinner xradio xr819 wifi chip 
 
-This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian which is not supported anymore.
+This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore.
 
-Most of all, this is work in progress.
+WARNING, this is work in progress!
 
-# Building on the Orange Pi Zero
+# Building an "out-of-tree" driver on the Orange Pi Zero
 
 To use the driver on the Orange Pi Zero install Armbian from SD-card (preferbly prepared with Etcher). Log in as root.
 First clone this code and compile locally on OrangePi Zero (using kernel version 4.11.5 here ...):
@@ -41,7 +41,7 @@ reboot
 
 Check ifconfig for the wlan0 interface ...
 
-# Building on a host system
+# Building a kernel on a host system
 
 To cross-compile and build the kernel module on a host system try something like this:
 
