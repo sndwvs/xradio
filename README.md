@@ -6,8 +6,8 @@ Most of all, this is work in progress.
 
 # Building on the Orange Pi Zero
 
-To use the driver on the Orange Pi Zero install Armbian from SD-card prepared (preferbly prepared with Etcher). Log in as root.
-First clone this code and compile locally on OrangePi Zero:
+To use the driver on the Orange Pi Zero install Armbian from SD-card (preferbly prepared with Etcher). Log in as root.
+First clone this code and compile locally on OrangePi Zero (using kernel version 4.11.5 here ...):
 
 ```
 git clone https://github.com/karabek/xradio.git
