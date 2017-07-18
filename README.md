@@ -1,6 +1,11 @@
 # Driver for the Allwinner xradio xr819 wifi chip 
 
-This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore.
+This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore. 
+
+Tested with:
+
+	Kernel version 4.11.5
+	Armbian version 5.32 
 
 WARNING, this is work in progress!
 
@@ -37,7 +42,7 @@ armbian-add-overlay xradio-mrk1.dts
 reboot
 ```
 
-Check ifconfig for the wlan0 interface ...
+Check ifconfig for wlan0 ...
 
 # Building a kernel on a host system
 
@@ -56,11 +61,6 @@ https://github.com/karabek/xradio/blob/master/sun8i-h2-plus-orangepi-zero.dts
 Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 # What works, what doesn't
-
-Tested with:
-
-	Kernel version 4.11.x
-	Armbian version 5.32 
 
 Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
