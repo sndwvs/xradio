@@ -26,9 +26,7 @@ cp xradio_wlan.ko /lib/modules/4.11.5-sun8i/kernel/drivers/net/wireless/xradio/
 Add xradio_wlan to the modules-file and make module dependencies available:
 
 ```
-nano /etc/modules
-	add single line: 
-		xradio_wlan
+echo -e "xradio_wlan" >> /etc/modules
 depmod
 ```
 
