@@ -4,10 +4,15 @@ This is an experimental wifi driver for the Orange Pi Zero. It is supposed to re
 
 Tested with:
 
-	Kernel version 4.11.5
+	Kernel version 4.11.5, does not work with 4.11.3 due to kernel error
 	Armbian version 5.32 
 
+Standard client station mode seems to work, but connecing to open APs fails.
+Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
+Don't expect throughputs substantially exceeding 10 Mbit/s.
+
 WARNING, this is work in progress!
+
 
 # Building an "out-of-tree" driver on the Orange Pi Zero
 
@@ -17,15 +22,15 @@ First clone this code and compile locally on OrangePi Zero (using kernel version
 ```
 git clone https://github.com/karabek/xradio.git
 cd xradio
-make  -C /lib/modules/4.11.5-sun8i/build M=$PWD modules
+make  -C /lib/modules/$(uname -r)/build M=$PWD modules
 ll *.ko
 ```
 
 You should see the compiled module (xradio_wlan.ko). Now copy it into the driver tree:
 
 ```
-mkdir /lib/modules/4.11.5-sun8i/kernel/drivers/net/wireless/xradio
-cp xradio_wlan.ko /lib/modules/4.11.5-sun8i/kernel/drivers/net/wireless/xradio/
+mkdir /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio
+cp xradio_wlan.ko /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio/
 ```
 
 Add xradio_wlan to the modules-file and make module dependencies available:
@@ -60,8 +65,4 @@ https://github.com/karabek/xradio/blob/master/sun8i-h2-plus-orangepi-zero.dts
 
 Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
-# What works, what doesn't
 
-Standard client station mode seems to work, but connecing to open APs fails.
-Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
-Don't expect throughputs substantially exceeding 10 Mbit/s.
