@@ -16,8 +16,21 @@ WARNING, this is work in progress!
 
 # Building an "out-of-tree" driver on the Orange Pi Zero
 
-To use the driver on the Orange Pi Zero install Armbian from SD-card (preferbly prepared with Etcher). Log in as root.
-First clone this code and compile locally on OrangePi Zero (using kernel version 4.11.5 here ...):
+To use the driver on the Orange Pi Zero install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
+
+Option 1: the quick way
+
+Clone the driver code directly on the Orange Pi Zero and use the provided script to compile and install the driver.
+
+```
+git clone https://github.com/karabek/xradio.git
+cd xradio
+sudo ./xr-install.sh
+```
+
+Option 2: step-by-step
+
+First clone driver code and compile locally on OrangePi Zero:
 
 ```
 git clone https://github.com/karabek/xradio.git
@@ -26,7 +39,7 @@ make  -C /lib/modules/$(uname -r)/build M=$PWD modules
 ll *.ko
 ```
 
-You should see the compiled module (xradio_wlan.ko). Now copy it into the driver tree:
+You should see the compiled module (xradio_wlan.ko). Now copy it to the driver tree:
 
 ```
 mkdir /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio
@@ -47,7 +60,7 @@ armbian-add-overlay xradio-mrk1.dts
 reboot
 ```
 
-Check ifconfig for wlan0 ...
+Check for wlan0 now.
 
 # Building a kernel on a host system
 
