@@ -26,6 +26,6 @@ fi
 echo "=============== calling depmod"
 depmod
 echo "=============== adding overlay"
-armbian-add-overlay xradio-mrk1.dts
+armbian-add-overlay dts/xradio-mrk1.dts
 exit
 
