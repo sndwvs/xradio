@@ -16,6 +16,12 @@ kvers="$(uname -r)"
 #	exit
 #fi
 echo "=============== compiling driver for kernel version $kvers"
+cp Makefile.orig Makefile
+cp Makefile Makefile.orig
+echo "CONFIG_WLAN_VENDOR_XRADIO := m" > Makefile
+echo "CONFIG_XRADIO_USE_EXTENSIONS := y" >> Makefile
+echo "CONFIG_XRADIO_WAPI_SUPPORT := n" >> Makefile
+cat Makefile.orig >> Makefile
 make  -C /lib/modules/$kvers/build M=$PWD modules
 mkdir /lib/modules/$kvers/kernel/drivers/net/wireless/xradio
 cp xradio_wlan.ko /lib/modules/$kvers/kernel/drivers/net/wireless/xradio/
