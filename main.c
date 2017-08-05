@@ -592,7 +592,7 @@ err4:
 err3:
 	xradio_pm_deinit(&hw_priv->pm_state);
 err2:
-err1:
+/* err1: 	MRK: unused label*/
 	xradio_free_common(dev);
 	return err;
 }

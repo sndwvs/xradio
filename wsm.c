@@ -2081,8 +2081,8 @@ int wsm_handle_rx(struct xradio_common *hw_priv, int id,
 {
 	int ret = 0;
 	struct wsm_buf wsm_buf;
-	struct xradio_vif *priv = NULL;
-	int i = 0;
+	/* struct xradio_vif *priv = NULL; 	MRK: unused variable, see if 0 below */
+	/* int i = 0;				MRK: unused variable, see if 0 below */
 	int interface_link_id = (id >> 6) & 0x0F;
 #ifdef ROAM_OFFLOAD
 #if 0
