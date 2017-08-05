@@ -56,7 +56,7 @@ depmod
 Finally add dts overlay and reboot:
 
 ```
-armbian-add-overlay xradio-mrk1.dts
+armbian-add-overlay dts/xradio-mrk1.dts
 reboot
 ```
 
