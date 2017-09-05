@@ -21,6 +21,7 @@ WARNING, this is work in progress!
 2. Install kernel headers:
 
 	wget https://apt.armbian.com/pool/main/l/$(uname -r)/linux-headers-dev-sun8i_5.32.170904_armhf.deb
+
 	sudo dpkg -i linux-headers-dev-sun8i_5.32.170904_armhf.deb
 
 If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com search a current headers-package at <https://beta.armbian.com/pool/main/l/$(uname -r)/>
