@@ -2,10 +2,11 @@
 
 This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore. 
 
-Tested with:
+Tested with kernel versions:
 
-	Kernel version 4.11.5, does not work with 4.11.3 due to kernel error
-	Armbian version 5.32 
+	4.11.3:  does not work, due to kernel error
+	4.11.5:  tested ok
+	4.11.12: tested ok
 
 Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
