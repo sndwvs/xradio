@@ -14,10 +14,19 @@ Don't expect throughputs substantially exceeding 10 Mbit/s.
 
 WARNING, this is work in progress!
 
+# Preparation
+
+1. To use the driver on the Orange Pi Zero install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
+
+2. Install kernel headers:
+
+	wget https://apt.armbian.com/pool/main/l/$(uname -r)/linux-headers-dev-sun8i_5.32.170904_armhf.deb
+	sudo dpkg -i linux-headers-dev-sun8i_5.32.170904_armhf.deb
+
+If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com search a current headers-package at <https://beta.armbian.com/pool/main/l/$(uname -r)/>
+
 
 # Building an "out-of-tree" driver on the Orange Pi Zero
-
-To use the driver on the Orange Pi Zero install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
 
 Option 1: the quick way
 
