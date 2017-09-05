@@ -16,7 +16,7 @@ WARNING, this is work in progress!
 
 # Preparation
 
-1. To use the driver on the Orange Pi Zero install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
+1. Install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
 
 2. Install kernel headers:
 
