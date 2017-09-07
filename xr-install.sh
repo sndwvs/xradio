@@ -4,28 +4,50 @@ if [[ $EUID != 0 ]]; then
 	sudo "$0" "$@"
 	exit $?
 fi
+
 echo ""
 echo "******************************************************"
 echo "*** out-of-tree xradio driver installer - vers 0.2 ***"
 echo "*** https://github.com/karabek/xradio              ***"
 echo "******************************************************"
 echo ""
+
+filename="/etc/armbian-release"
+while read -r line
+do
+	val1=${line%=*}			# value
+	val2=${line#*=}			# variable
+	if [ "$val1" == "VERSION" ]; then
+		ARMBIANVERS="$val2"
+	fi
+	if [ "$val1" == "LINUXFAMILY" ]; then
+		LINUXFAM="$val2"
+	fi
+done < "$filename"
+
 KVERS="$(uname -r)"
 KERNELDIR="/lib/modules/$KVERS"
-HEADERS="linux-headers-dev-sun8i_5.32_armhf.deb"
+HEADERS="linux-headers-dev-"$LINUXFAM"_"$ARMBIANVERS"_armhf.deb"
+
 if [ ! -d "$KERNELDIR/build" ]; then
+	echo "==== KERNEL HEADERS"
+	echo "     Linux family:     $LINUXFAM"
+	echo "     Kernel version:   $KVERS"
+	echo "     Armbian version:  $ARMBIANVERS"
+	echo "     Attempting to load kernel headers ..."
+	echo
 	wget "https://apt.armbian.com/pool/main/l/linux-$KVERS/$HEADERS"
 	if [ -f "$HEADERS" ]; then
 		dpkg -i "$HEADERS"
 	else
-		echo "***** FATAL: Headers not found at apt.armbian.com - Try installing current ..."
-		echo "    linux-headers-headers-sun8i_5.32XXXXXXX.deb"
-		echo "... from beta.armbian.com and try again!"
+		echo "==== FATAL: Headers not found at apt.armbian.com - Try installing current ..."
+		echo "     linux-headers-headers-"$LINUXFAM"_"$ARMBIANVERS"XXXXXXX_armhf.deb"
+		echo "     ... from beta.armbian.com and try again!"
 		exit 0
 	fi
 fi
 
-echo "=============== compiling driver for kernel version $KVERS"
+echo "==== Compiling driver for kernel version $KVERS"
 # prepare Makefile for stand alone compilation and compile
 cp Makefile.orig Makefile
 cp Makefile Makefile.orig
@@ -42,9 +64,12 @@ xmod=`grep xradio /etc/modules`
 if [ -z "$xmod" ]; then
         echo -e "xradio_wlan" >> /etc/modules
 fi
-echo "=============== calling depmod"
+echo
+echo "==== calling depmod"
+echo
 depmod
-echo "=============== adding overlay"
+echo
+echo "==== adding overlay"
+echo
 armbian-add-overlay dts/xradio-mrk1.dts
 exit
-
