@@ -2,7 +2,7 @@
 
 This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore. 
 
-UPDATE: armbians current "next" branch supports wlan for the Orange Pi Zero again, [see (https://github.com/armbian/build/commit/dbdf2a0f15aa8a9640460e2e8f4a688028160158)].
+UPDATE: armbians current "next" branch supports wlan for the Orange Pi Zero again, [see here] (https://github.com/armbian/build/commit/dbdf2a0f15aa8a9640460e2e8f4a688028160158).
 
 Tested with kernel versions:
 
@@ -27,7 +27,7 @@ wget https://apt.armbian.com/pool/main/l/$(uname -r)/linux-headers-dev-sun8i_5.3
 sudo dpkg -i linux-headers-dev-sun8i_5.32_armhf.deb
 ```
 
-If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com, search and install a current headers-package at [(https://beta.armbian.com/pool/main/l/$(uname -r)/)]
+If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com, search and install a current headers-package at [https://beta.armbian.com/pool/main/l/$(uname -r)/]
 
 
 # Building an "out-of-tree" driver on the Orange Pi Zero
