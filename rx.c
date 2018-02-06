@@ -8,9 +8,9 @@
 #include "bh.h"
 #include "ap.h"
 
-	// MRK: added copy of this tx.c function here for testing
+	// MRK: added copy of this tx.c function here for testing, renamed _rx
 
-static void xradio_check_go_neg_conf_success(struct xradio_common *hw_priv,
+static void xradio_check_go_neg_conf_success_rx(struct xradio_common *hw_priv,
 						u8 *action)
 {
 	if (action[2] == 0x50 && action[3] == 0x6F && action[4] == 0x9A &&
@@ -136,7 +136,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 	if ((ieee80211_is_action(frame->frame_control))
 	    && (mgmt->u.action.category == WLAN_CATEGORY_PUBLIC)) {
 		u8 *action = (u8*)&mgmt->u.action.category;
-		xradio_check_go_neg_conf_success(hw_priv, action);
+		xradio_check_go_neg_conf_success_rx(hw_priv, action);
 	}
 #endif
 
@@ -219,7 +219,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 #endif
        
 	if (arg->rxedRate >= 14) {
-		hdr->flag |= RX_FLAG_HT;
+		hdr->encoding = RX_ENC_HT;
 		hdr->rate_idx = arg->rxedRate - 14;
 	} else if (arg->rxedRate >= 4) {
 		if (hdr->band == NL80211_BAND_5GHZ)

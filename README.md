@@ -1,24 +1,17 @@
 # Driver for the Allwinner xradio xr819 wifi chip 
 
-This is an experimental wifi driver for the Orange Pi Zero. It is supposed to replace the driver provided by armbian (www.armbian.com) which is not supported anymore. 
+This is an experimental wifi driver for devices with the XRADIO XR819 wifi chip such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. It is based on `https://github.com/fifteenhex/xradio`.
 
-UPDATE: armbians current "next" branch supports wlan for the Orange Pi Zero again, [see here] (https://github.com/armbian/build/commit/dbdf2a0f15aa8a9640460e2e8f4a688028160158).
-
-Tested with kernel versions:
-
-	4.11.3:  does not work, due to kernel error
-	4.11.5:  tested ok
-	4.11.12: tested ok
+Supported kernel version: 4.14.17
 
 Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
-Don't expect throughputs substantially exceeding 10 Mbit/s.
-
-WARNING, this is work in progress!
+Don't expect throughputs substantially exceeding 20 Mbit/s.
 
 # Preparation
 
-1. Install Armbian from SD-card (prepared with Etcher - http://etcher.io). Log in as root.
+1. Install Firmware
+Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 2. Install kernel headers:
 
@@ -30,11 +23,11 @@ sudo dpkg -i linux-headers-dev-sun8i_5.32_armhf.deb
 If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com, search and install a current headers-package at [https://beta.armbian.com/pool/main/l/$(uname -r)/]
 
 
-# Building an "out-of-tree" driver on the Orange Pi Zero
+# Building an "out-of-tree" driver on the device
 
 Option 1: the quick way
 
-Clone the driver code directly on the Orange Pi Zero and use the provided script to compile and install the driver.
+Clone the driver code directly on the device and use the provided script to compile and install the driver. This only works with armbian (www.armbian.com).
 
 ```
 git clone https://github.com/karabek/xradio.git
@@ -42,9 +35,17 @@ cd xradio
 sudo ./xr-install.sh
 ```
 
+Use armbians armbian-add-overlay command to install a device-specific extension of the device tree (example here for the OrangePi Zero) and reboot:
+
+```
+armbian-add-overlay dts/xradio-overlay-xxxx.dts
+reboot
+```
+
+
 Option 2: step-by-step
 
-First clone driver code and compile locally on OrangePi Zero:
+First clone driver code and compile locally on the device:
 
 ```
 git clone https://github.com/karabek/xradio.git
@@ -53,7 +54,7 @@ make  -C /lib/modules/$(uname -r)/build M=$PWD modules
 ll *.ko
 ```
 
-You should see the compiled module (xradio_wlan.ko). Now copy it to the driver tree:
+You should see the compiled module (xradio_wlan.ko). Now copy the module to the correct driver directory:
 
 ```
 mkdir /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio
@@ -67,14 +68,13 @@ echo -e "xradio_wlan" >> /etc/modules
 depmod
 ```
 
-Finally add dts overlay and reboot:
+Make sure that the xradio-chip is supported by the device tree. For armbian (www.armbian.com) this can be achieved by loading a dts-overlay:
 
 ```
 armbian-add-overlay dts/xradio-mrk1.dts
-reboot
 ```
 
-Check for wlan0 now.
+Finally reboot the device.
 
 # Building a kernel on a host system
 
@@ -85,11 +85,8 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$PWD INSTALL_MOD_PATH=<PATH TO INSTALL MODULE> modules_install
 ```
 
-To use this driver with armbian you will need to add a couple of lines to sun8i-h2-plus-orangepi-zero.dts (e.g. by adding a corresponding git diff to a userpatch). See here
+An example device tree file (for the Orange Pi Zero) can be found here
 https://github.com/karabek/xradio/blob/master/sun8i-h2-plus-orangepi-zero.dts
 
-# Firmware
-
-Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
 

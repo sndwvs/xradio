@@ -7,12 +7,17 @@ fi
 
 echo ""
 echo "******************************************************"
-echo "*** out-of-tree xradio driver installer - vers 0.2 ***"
+echo "*** out-of-tree xradio driver installer - vers 0.3 ***"
 echo "*** https://github.com/karabek/xradio              ***"
 echo "******************************************************"
 echo ""
 
 filename="/etc/armbian-release"
+if [ ! -f $filename ]; then
+	echo "This script only works with armbian (armbian.com). File $filename not found!"
+	exit 1
+fi
+
 while read -r line
 do
 	val1=${line%=*}			# value
@@ -29,11 +34,11 @@ KVERS="$(uname -r)"
 KERNELDIR="/lib/modules/$KVERS"
 HEADERS="linux-headers-dev-"$LINUXFAM"_"$ARMBIANVERS"_armhf.deb"
 
+echo "==== KERNEL HEADERS"
+echo "     Linux family:     $LINUXFAM"
+echo "     Kernel version:   $KVERS"
+echo "     Armbian version:  $ARMBIANVERS"
 if [ ! -d "$KERNELDIR/build" ]; then
-	echo "==== KERNEL HEADERS"
-	echo "     Linux family:     $LINUXFAM"
-	echo "     Kernel version:   $KVERS"
-	echo "     Armbian version:  $ARMBIANVERS"
 	echo "     Attempting to load kernel headers ..."
 	echo
 	wget "https://apt.armbian.com/pool/main/l/linux-$KVERS/$HEADERS"
@@ -69,7 +74,9 @@ echo "==== calling depmod"
 echo
 depmod
 echo
-echo "==== adding overlay"
+echo "DONE! To add an overlay adding the xradio hardware to the device tree use this command:"
 echo
-armbian-add-overlay dts/xradio-mrk1.dts
+echo "OrangePi Zero:	armbian-add-overlay dts/xradio-overlay-orangepizero.dts"
+echo "NanoPi Duo:	<tbd>"
+echo "Sunvell R69:	<tbd>"
 exit
