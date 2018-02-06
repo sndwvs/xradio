@@ -1,6 +1,6 @@
-# Driver for the Allwinner xradio xr819 wifi chip 
+# Driver for the Allwinner XRadio XR819 wifi chip 
 
-This is an experimental wifi driver for devices with the XRADIO XR819 wifi chip such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. It is based on `https://github.com/fifteenhex/xradio`.
+This is an experimental wifi driver for devices using the XRADIO XR819 wifi chip - such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. This port is based on `https://github.com/fifteenhex/xradio`.
 
 Supported kernel version: 4.14.17
 
@@ -8,22 +8,13 @@ Standard client station mode seems to work, but connecing to open APs fails.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
 Don't expect throughputs substantially exceeding 20 Mbit/s.
 
-# Preparation
+# Firmware
 
-1. Install Firmware
 Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
 
-2. Install kernel headers:
-
-```
-wget https://apt.armbian.com/pool/main/l/$(uname -r)/linux-headers-dev-sun8i_5.32_armhf.deb
-sudo dpkg -i linux-headers-dev-sun8i_5.32_armhf.deb
-```
-
-If you are using a beta-kernel and your kernel version is not yet available at apt.armbian.com, search and install a current headers-package at [https://beta.armbian.com/pool/main/l/$(uname -r)/]
-
-
 # Building an "out-of-tree" driver on the device
+
+Make sure kernel headers are installed.
 
 Option 1: the quick way
 
