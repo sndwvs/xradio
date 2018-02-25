@@ -2792,31 +2792,31 @@ int wsm_get_tx(struct xradio_common *hw_priv, u8 **data,
 				continue;
 			}
 
-#ifdef ROC_DEBUG
-			{
-				struct ieee80211_hdr *hdr =
-				(struct ieee80211_hdr *)
-					&((u8 *)wsm)[txpriv->offset];
-
-				wsm_printk(XRADIO_DBG_ERROR, "QGET-1 %x, off_id %d,"
-					       " if_id %d\n",
-						hdr->frame_control,
-						txpriv->offchannel_if_id,
-						priv->if_id);
-			}
-#else
-			{
-				struct ieee80211_hdr *hdr =
-				(struct ieee80211_hdr *)
-					&((u8 *)wsm)[txpriv->offset];
-
-				wsm_printk(XRADIO_DBG_ERROR, "QGET-1 %x, off_id %d,"
-						   " if_id %d\n",
-						hdr->frame_control,
-						txpriv->raw_if_id,
-						priv->if_id);
-			}
-#endif
+// #ifdef ROC_DEBUG
+// 			{
+// 				struct ieee80211_hdr *hdr =
+// 				(struct ieee80211_hdr *)
+// 					&((u8 *)wsm)[txpriv->offset];
+// 
+// 				wsm_printk(XRADIO_DBG_ERROR, "QGET-1 %x, off_id %d,"
+// 					       " if_id %d\n",
+// 						hdr->frame_control,
+// 						txpriv->offchannel_if_id,
+// 						priv->if_id);
+// 			}
+// #else
+// 			{
+// 				struct ieee80211_hdr *hdr =
+// 				(struct ieee80211_hdr *)
+// 					&((u8 *)wsm)[txpriv->offset];
+// 
+// 				wsm_printk(XRADIO_DBG_ERROR, "QGET-1 %x, off_id %d,"
+// 						   " if_id %d\n",
+// 						hdr->frame_control,
+// 						txpriv->raw_if_id,
+// 						priv->if_id);
+// 			}
+// #endif
 
 			if (wsm_handle_tx_data(priv, wsm,
 					tx_info, txpriv, queue)) {
@@ -2835,32 +2835,32 @@ int wsm_get_tx(struct xradio_common *hw_priv, u8 **data,
 					WSM_TX_IF_ID(priv->if_id));
 
 			*vif_selected = priv->if_id;
-#ifdef ROC_DEBUG
-/* remand the roc debug. */
-			{
-				struct ieee80211_hdr *hdr =
-				(struct ieee80211_hdr *)
-					&((u8 *)wsm)[txpriv->offset];
-
-				wsm_printk(XRADIO_DBG_ERROR, "QGET-2 %x, off_id %d,"
-					       " if_id %d\n",
-						hdr->frame_control,
-						txpriv->offchannel_if_id,
-						priv->if_id);
-			}
-#else
-			{
-				struct ieee80211_hdr *hdr =
-				(struct ieee80211_hdr *)
-					&((u8 *)wsm)[txpriv->offset];
-
-				wsm_printk(XRADIO_DBG_ERROR, "QGET-2 %x, off_id %d,"
-						   " if_id %d\n",
-						hdr->frame_control,
-						txpriv->raw_if_id,
-						priv->if_id);
-			}
-#endif
+// #ifdef ROC_DEBUG
+// /* remand the roc debug. */
+// 			{
+// 				struct ieee80211_hdr *hdr =
+// 				(struct ieee80211_hdr *)
+// 					&((u8 *)wsm)[txpriv->offset];
+// 
+// 				wsm_printk(XRADIO_DBG_ERROR, "QGET-2 %x, off_id %d,"
+// 					       " if_id %d\n",
+// 						hdr->frame_control,
+// 						txpriv->offchannel_if_id,
+// 						priv->if_id);
+// 			}
+// #else
+// 			{
+// 				struct ieee80211_hdr *hdr =
+// 				(struct ieee80211_hdr *)
+// 					&((u8 *)wsm)[txpriv->offset];
+// 
+// 				wsm_printk(XRADIO_DBG_ERROR, "QGET-2 %x, off_id %d,"
+// 						   " if_id %d\n",
+// 						hdr->frame_control,
+// 						txpriv->raw_if_id,
+// 						priv->if_id);
+// 			}
+// #endif
 
 			priv->pspoll_mask &= ~BIT(txpriv->raw_link_id);
 

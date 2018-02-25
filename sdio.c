@@ -130,6 +130,7 @@ static int xradio_probe_of(struct sdio_func *func)
 	struct device_node *np = dev->of_node;
 	const struct of_device_id *of_id;
 	int irq;
+	int ret;
 
 	of_id = of_match_node(xradio_sdio_of_match_table, np);
 	if (!of_id)
@@ -143,7 +144,11 @@ static int xradio_probe_of(struct sdio_func *func)
 		return -EINVAL;
 	}
 
-	devm_request_irq(dev, irq, sdio_irq_handler, 0, "xradio", func);
+	ret = devm_request_irq(dev, irq, sdio_irq_handler, 0, "xradio", func);
+	if (ret) {
+		dev_err(dev, "Failed to request irq_wakeup.\n");
+		return -EINVAL;
+	}
 
 	return 0;
 }

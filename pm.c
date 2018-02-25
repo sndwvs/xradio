@@ -256,8 +256,10 @@ void xradio_pm_unlock_awake(struct xradio_pm_state *pm)
 
 #else /* CONFIG_WAKELOCK */
 
-static void xradio_pm_stay_awake_tmo(unsigned long arg)
+static void xradio_pm_stay_awake_tmo(struct timer_list *t)
 {
+	struct xradio_pm_state *pm = from_timer(pm, t, stay_awake);
+	(void)pm;
 }
 
 int xradio_pm_init(struct xradio_pm_state *pm,
@@ -268,9 +270,7 @@ int xradio_pm_init(struct xradio_pm_state *pm,
 
 	ret = xradio_pm_init_common(pm, hw_priv);
 	if (!ret) {
-		init_timer(&pm->stay_awake);
-		pm->stay_awake.data = (unsigned long)pm;
-		pm->stay_awake.function = xradio_pm_stay_awake_tmo;
+		timer_setup(&pm->stay_awake, xradio_pm_stay_awake_tmo, 0);
 	} else 
 		pm_printk(XRADIO_DBG_ERROR,"xradio_pm_init_common failed!\n");
 	return ret;
@@ -343,9 +343,9 @@ static int xradio_resume_work(struct xradio_common *hw_priv,
 
 static int xradio_suspend_late(struct device *dev)
 {
+#ifdef CONFIG_XRADIO_SUSPEND_POWER_OFF
 	struct xradio_common *hw_priv = dev->platform_data;
 
-#ifdef CONFIG_XRADIO_SUSPEND_POWER_OFF
 	if (XRADIO_POWEROFF_SUSP == atomic_read(&hw_priv->suspend_state)) {
 		return 0; /* we don't rx data when power down wifi.*/
 	}
