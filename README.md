@@ -2,7 +2,7 @@
 
 This is an experimental wifi driver for devices using the XRADIO XR819 wifi chip - such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. This port is based on `https://github.com/fifteenhex/xradio`.
 
-Tested kernel version: 4.14.17-21, 4.15.x, 4.16.0rc2
+Tested kernel version: 4.14 - 4.17
 
 Standard client station mode seems to work, but connecing to open APs does not.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
@@ -44,9 +44,11 @@ cd xradio
 ```
 
 Uncomment line 2-4 of Makefile:
+```
 	CONFIG_WLAN_VENDOR_XRADIO := m
 	CONFIG_XRADIO_USE_EXTENSIONS := y
 	CONFIG_XRADIO_WAPI_SUPPORT := n
+```
 
 Make kernel module:
 
