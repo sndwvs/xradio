@@ -2,7 +2,7 @@
 
 This is an experimental wifi driver for devices using the XRADIO XR819 wifi chip - such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. This port is based on `https://github.com/fifteenhex/xradio`.
 
-Tested kernel version: 4.14 - 4.17
+Tested kernel version: 4.14 - 4.18
 
 Standard client station mode seems to work, but connecing to open APs does not.
 Master (AP) mode works with WPA/WPA2 enabled is supposed to work.
@@ -89,7 +89,7 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$
 ```
 
 An example device tree file (for the Orange Pi Zero) can be found here
-https://github.com/karabek/xradio/blob/master/sun8i-h2-plus-orangepi-zero.dts
+https://github.com/karabek/xradio/blob/master/dts/sun8i-h2-plus-orangepi-zero.dts
 
 
 
