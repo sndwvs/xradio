@@ -185,7 +185,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 			hdr->flag |= RX_FLAG_MMIC_ERROR;
 		} else if (arg->status == WSM_STATUS_NO_KEY_FOUND) {
 			dev_warn(priv->hw_priv->pdev, "received frame has no key status\n");
-			//goto drop;
+			goto drop;
 		} else {
 			dev_err(priv->hw_priv->pdev, "[RX] IF=%d, Receive failure: %d.\n",
 				priv->if_id, arg->status);
