@@ -841,9 +841,9 @@ xradio_tx_h_bt(struct xradio_vif *priv, struct xradio_txinfo *t, struct wsm_tx *
 			priority = WSM_EPTA_PRIORITY_ACTION;
 		else if (ieee80211_is_mgmt(t->hdr->frame_control))
 			priority = WSM_EPTA_PRIORITY_MGT;
-		else if ((wsm->queueId == WSM_QUEUE_VOICE))
+		else if (wsm->queueId == WSM_QUEUE_VOICE)
 			priority = WSM_EPTA_PRIORITY_VOICE;
-		else if ((wsm->queueId == WSM_QUEUE_VIDEO))
+		else if (wsm->queueId == WSM_QUEUE_VIDEO)
 			priority = WSM_EPTA_PRIORITY_VIDEO;
 		else
 			priority = WSM_EPTA_PRIORITY_DATA;
