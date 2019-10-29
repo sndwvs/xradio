@@ -1,13 +1,16 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
 config WLAN_VENDOR_XRADIO
        tristate "XRADIO WLAN support"
        depends on MAC80211
-       default n
-       help
+       default y
+	---help---
+	  If you have a wireless card belonging to this class, say Y.
 
-         This is an experimental driver for the XRADIO chip-set.
-         Enabling this option enables the generic driver without
-         any platform support.
-         Please select the appropriate platform below.
+	  Note that the answer to this question doesn't directly affect the
+	  kernel: saying N will just cause the configurator to skip all
+	  the questions about cards. If you say Y, you will be asked for
+	  your specific card in the following questions.
 
 if WLAN_VENDOR_XRADIO
 
@@ -43,4 +46,4 @@ config XRADIO_USE_EXTENSIONS
 	  Say Y if you want to include XR extensions
 	  If unsure, say Y.
 
-endif
+endif # WLAN_VENDOR_XRADIO
