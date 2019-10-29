@@ -43,7 +43,7 @@ git clone https://github.com/karabek/xradio.git
 cd xradio
 ```
 
-Uncomment line 2-4 of Makefile:
+Uncomment line 4-6 of Makefile:
 ```
 	CONFIG_WLAN_VENDOR_XRADIO := m
 	CONFIG_XRADIO_USE_EXTENSIONS := y
