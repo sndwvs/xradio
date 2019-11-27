@@ -15,6 +15,7 @@
 #include <linux/if_arp.h>
 #include <linux/ipv6.h>
 #include <linux/icmpv6.h>
+#include <linux/version.h>	/* MRK 5.4 */
 #include <net/ndisc.h>
 
 #include "xradio.h"
@@ -960,7 +961,12 @@ int xradio_remain_on_channel(struct ieee80211_hw *hw,
 	return ret;
 }
 
+/* MRK 5.4 */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
 int xradio_cancel_remain_on_channel(struct ieee80211_hw *hw)
+#else
+int xradio_cancel_remain_on_channel(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+#endif
 {
 	struct xradio_common *hw_priv = hw->priv;
 

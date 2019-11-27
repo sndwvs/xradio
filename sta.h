@@ -8,6 +8,9 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+
+#include <linux/version.h>	/* MRK 5.4 */
+
 #ifndef STA_H_INCLUDED
 #define STA_H_INCLUDED
 
@@ -64,7 +67,12 @@ int xradio_remain_on_channel(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif,
                              struct ieee80211_channel *chan,
                              int duration, enum ieee80211_roc_type type);
+/* MRK 5.4 */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
 int xradio_cancel_remain_on_channel(struct ieee80211_hw *hw);
+#else
+int xradio_cancel_remain_on_channel(struct ieee80211_hw *hw, struct ieee80211_vif *vif);
+#endif
 int xradio_set_arpreply(struct ieee80211_hw *hw, struct ieee80211_vif *vif);
 u64 xradio_prepare_multicast(struct ieee80211_hw *hw,
                              struct netdev_hw_addr_list *mc_list);
