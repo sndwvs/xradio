@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 # Standalone Makefile - uncomment for out-of-tree compilation
-#CONFIG_WLAN_VENDOR_XRADIO := y
+#CONFIG_WLAN_VENDOR_XRADIO := m
 #CONFIG_XRADIO_USE_EXTENSIONS := y
 #CONFIG_XRADIO_WAPI_SUPPORT := n
 
