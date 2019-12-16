@@ -56,7 +56,7 @@ echo "==== Compiling driver for kernel version $KVERS"
 # prepare Makefile for stand alone compilation and compile
 cp Makefile.orig Makefile
 cp Makefile Makefile.orig
-echo "CONFIG_WLAN_VENDOR_XRADIO := m" > Makefile
+echo "CONFIG_WLAN_VENDOR_XRADIO := y" > Makefile
 echo "CONFIG_XRADIO_USE_EXTENSIONS := y" >> Makefile
 echo "CONFIG_XRADIO_WAPI_SUPPORT := n" >> Makefile
 cat Makefile.orig >> Makefile
