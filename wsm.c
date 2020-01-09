@@ -1440,7 +1440,7 @@ static int wsm_event_indication(struct xradio_common *hw_priv,
 
 	event = kzalloc(sizeof(struct xradio_wsm_event), GFP_KERNEL);
 	if (event == NULL) {
-		dev_err(hw_priv->pdev, "xr_kzalloc failed!");
+		dev_err(hw_priv->pdev, "kzalloc failed!");
 		return -EINVAL;
 	}
 

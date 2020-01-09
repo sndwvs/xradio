@@ -337,8 +337,14 @@ struct ieee80211_hw *xradio_init_common(size_t hw_priv_data_len)
 	mutex_init(&hw_priv->wsm_oper_lock);
 	atomic_set(&hw_priv->tx_lock, 0);
 	sema_init(&hw_priv->tx_lock_sem, 1);
-
 	hw_priv->workqueue = create_singlethread_workqueue(XRADIO_WORKQUEUE);
+
+	/*  MRK 5.2 */
+	if (!hw_priv->workqueue) {
+		ieee80211_free_hw(hw);
+		return NULL;
+	}
+
 	sema_init(&hw_priv->scan.lock, 1);
 	sema_init(&hw_priv->scan.status_lock,1);
 	INIT_WORK(&hw_priv->scan.work, xradio_scan_work);
@@ -492,6 +498,7 @@ int xradio_core_init(struct sdio_func* func)
 	int err = -ENOMEM;
 	u16 ctrl_reg;
 	int if_id;
+	u8 b;		/* MRK 5.5a */
 	struct ieee80211_hw *dev;
 	struct xradio_common *hw_priv;
 	unsigned char randomaddr[ETH_ALEN];
@@ -517,9 +524,10 @@ int xradio_core_init(struct sdio_func* func)
 		eth_random_addr(randomaddr);
 		addr = randomaddr;
 	}
-	memcpy(hw_priv->addresses[0].addr, addr, ETH_ALEN);
-	memcpy(hw_priv->addresses[1].addr, addr, ETH_ALEN);
-	hw_priv->addresses[1].addr[5] += 0x01;
+	for (b = 0; b < XRWL_MAX_VIFS; b++) {				/* MRK 5.5a */
+		memcpy(hw_priv->addresses[b].addr, addr, ETH_ALEN);
+		hw_priv->addresses[b].addr[5] += b;
+	}
 
 	/*init pm and wakelock. */
 #ifdef CONFIG_PM

@@ -357,7 +357,7 @@ int xradio_queue_put(struct xradio_queue *queue, struct sk_buff *skb,
                      struct xradio_txpriv *txpriv)
 {
 	int ret = 0;
-	LIST_HEAD(gc_list);
+	/* MRK 5.3 - removed LIST_HEAD(gc_list); */
 	struct xradio_queue_stats *stats = queue->stats;
 	/* TODO:COMBO: Add interface ID info to queue item */
 

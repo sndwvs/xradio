@@ -196,48 +196,48 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 	down(&hw_priv->scan.lock);
 	mutex_lock(&hw_priv->conf_mutex);
 
-		if (frame.skb) {
-			int ret = 0;
-			if (priv->if_id == 0)
-				xradio_remove_wps_p2p_ie(&frame);
-			ret = wsm_set_template_frame(hw_priv, &frame, priv->if_id);
-			if (ret) {
-				mutex_unlock(&hw_priv->conf_mutex);
-				up(&hw_priv->scan.lock);
-				dev_kfree_skb(frame.skb);
-				scan_printk(XRADIO_DBG_ERROR, "%s: wsm_set_template_frame failed: %d.\n",
-				             __func__, ret);
-				return ret;
-			}
-		}
-
-		wsm_vif_lock_tx(priv);
-
-		BUG_ON(hw_priv->scan.req);
-		hw_priv->scan.req     = req;
-		hw_priv->scan.n_ssids = 0;
-		hw_priv->scan.status  = 0;
-		hw_priv->scan.begin   = &req->channels[0];
-		hw_priv->scan.curr    = hw_priv->scan.begin;
-		hw_priv->scan.end     = &req->channels[req->n_channels];
-		hw_priv->scan.output_power = hw_priv->output_power;
-		hw_priv->scan.if_id = priv->if_id;
-		/* TODO:COMBO: Populate BIT4 in scanflags to decide on which MAC
-		 * address the SCAN request will be sent */
-
-		for (i = 0; i < req->n_ssids; ++i) {
-			struct wsm_ssid *dst = &hw_priv->scan.ssids[hw_priv->scan.n_ssids];
-			BUG_ON(req->ssids[i].ssid_len > sizeof(dst->ssid));
-			memcpy(&dst->ssid[0], req->ssids[i].ssid, sizeof(dst->ssid));
-			dst->length = req->ssids[i].ssid_len;
-			++hw_priv->scan.n_ssids;
-		}
-
-		mutex_unlock(&hw_priv->conf_mutex);
-
-		if (frame.skb)
+	if (frame.skb) {
+		int ret = 0;
+		if (priv->if_id == 0)
+			xradio_remove_wps_p2p_ie(&frame);
+		ret = wsm_set_template_frame(hw_priv, &frame, priv->if_id);
+		if (ret) {
+			mutex_unlock(&hw_priv->conf_mutex);
+			up(&hw_priv->scan.lock);
 			dev_kfree_skb(frame.skb);
-		queue_work(hw_priv->workqueue, &hw_priv->scan.work);
+			scan_printk(XRADIO_DBG_ERROR, "%s: wsm_set_template_frame failed: %d.\n",
+			             __func__, ret);
+			return ret;
+		}
+	}
+
+	wsm_vif_lock_tx(priv);
+
+	BUG_ON(hw_priv->scan.req);
+	hw_priv->scan.req     = req;
+	hw_priv->scan.n_ssids = 0;
+	hw_priv->scan.status  = 0;
+	hw_priv->scan.begin   = &req->channels[0];
+	hw_priv->scan.curr    = hw_priv->scan.begin;
+	hw_priv->scan.end     = &req->channels[req->n_channels];
+	hw_priv->scan.output_power = hw_priv->output_power;
+	hw_priv->scan.if_id = priv->if_id;
+	/* TODO:COMBO: Populate BIT4 in scanflags to decide on which MAC
+	 * address the SCAN request will be sent */
+
+	for (i = 0; i < req->n_ssids; ++i) {
+		struct wsm_ssid *dst = &hw_priv->scan.ssids[hw_priv->scan.n_ssids];
+		BUG_ON(req->ssids[i].ssid_len > sizeof(dst->ssid));
+		memcpy(&dst->ssid[0], req->ssids[i].ssid, sizeof(dst->ssid));
+		dst->length = req->ssids[i].ssid_len;
+		++hw_priv->scan.n_ssids;
+	}
+
+	mutex_unlock(&hw_priv->conf_mutex);
+
+	/* MRK 5.5a */
+	dev_kfree_skb(frame.skb);
+	queue_work(hw_priv->workqueue, &hw_priv->scan.work);
 
 	return 0;
 }

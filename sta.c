@@ -187,9 +187,9 @@ int xradio_add_interface(struct ieee80211_hw *dev,
 		return -ETIMEDOUT;
 	}
 
-	/* fix the problem that when connected,then deauth */
-	vif->driver_flags |= IEEE80211_VIF_BEACON_FILTER;
-	vif->driver_flags |= IEEE80211_VIF_SUPPORTS_UAPSD;
+	vif->driver_flags |= IEEE80211_VIF_BEACON_FILTER |		/* MRK 5.5a */
+			     IEEE80211_VIF_SUPPORTS_UAPSD |
+			     IEEE80211_VIF_SUPPORTS_CQM_RSSI;
 
 	priv = xrwl_get_vif_from_ieee80211(vif);
 	atomic_set(&priv->enabled, 0);
@@ -206,7 +206,9 @@ int xradio_add_interface(struct ieee80211_hw *dev,
 		for (i = 0; i < XRWL_MAX_VIFS; i++)
 			if (!memcmp(vif->addr, hw_priv->addresses[i].addr, ETH_ALEN))
 				break;
-		if (i == XRWL_MAX_VIFS) {
+		if (i == XRWL_MAX_VIFS) {	/* MRK#: (somewhat) ungracefully reject mac change */
+			wiphy_warn(dev->wiphy, "xradio adding vif %d: rejecting mac-addr change!\n", i);
+		 	memcpy(vif->addr, hw_priv->mac_addr, ETH_ALEN);
 			spin_unlock(&hw_priv->vif_list_lock);
 			mutex_unlock(&hw_priv->conf_mutex);
 			return -EINVAL;
@@ -233,7 +235,7 @@ int xradio_add_interface(struct ieee80211_hw *dev,
 	WARN_ON(wsm_write_mib(hw_priv, WSM_MIB_ID_SET_AUTO_CALIBRATION_MODE,
 		&auto_calibration_mode, sizeof(auto_calibration_mode)));
 	*/
-	wiphy_debug(dev->wiphy, "Interface ID:%d of type:%d added\n", priv->if_id, priv->mode);
+	wiphy_debug(dev->wiphy, "xradio adding vif #%d of type %d\n", priv->if_id, priv->mode);
 	mutex_unlock(&hw_priv->conf_mutex);
 
 	xradio_vif_setup(priv);
@@ -255,7 +257,7 @@ void xradio_remove_interface(struct ieee80211_hw *dev,
 	bool is_htcapie = false;
 	struct xradio_vif *tmp_priv;
 
-	wiphy_warn(dev->wiphy, "!!! vif_id=%d\n", priv->if_id);
+	wiphy_warn(dev->wiphy, "xradio removing vif #%d\n", priv->if_id);
 	atomic_set(&priv->enabled, 0);
 	down(&hw_priv->scan.lock);
 	if(priv->join_status == XRADIO_JOIN_STATUS_STA){
@@ -379,31 +381,26 @@ int xradio_config(struct ieee80211_hw *dev, u32 changed)
 	int ret = 0;
 	struct xradio_common *hw_priv = dev->priv;
 	struct ieee80211_conf *conf = &dev->conf;
-	/* TODO:COMBO: adjust to multi vif interface
-	 * IEEE80211_CONF_CHANGE_IDLE is still handled per xradio_vif*/
 	int if_id = 0;
 	struct xradio_vif *priv;
 
-
-	if (changed &
-		(IEEE80211_CONF_CHANGE_MONITOR|IEEE80211_CONF_CHANGE_IDLE)) {
-		/* TBD: It looks like it's transparent
-		 * there's a monitor interface present -- use this
-		 * to determine for example whether to calculate
-		 * timestamps for packets or not, do not use instead
-		 * of filter flags! */
-		wiphy_debug(dev->wiphy, "ignore IEEE80211_CONF_CHANGE_MONITOR (%d)"
-		           "IEEE80211_CONF_CHANGE_IDLE (%d)\n",
-		           (changed & IEEE80211_CONF_CHANGE_MONITOR) ? 1 : 0,
-		           (changed & IEEE80211_CONF_CHANGE_IDLE) ? 1 : 0);
-		return ret;
-	}
+	/*
+	wiphy_debug(dev->wiphy, "Config changed:  %08X\n", changed);
+	002	IEEE80211_CONF_CHANGE_SMPS
+	004	IEEE80211_CONF_CHANGE_LISTEN_INTERVAL
+	008	IEEE80211_CONF_CHANGE_MONITOR
+	010	IEEE80211_CONF_CHANGE_PS
+	020	IEEE80211_CONF_CHANGE_POWER
+	040	IEEE80211_CONF_CHANGE_CHANNEL
+	080	IEEE80211_CONF_CHANGE_RETRY_LIMITS
+	100	IEEE80211_CONF_CHANGE_IDLE
+	200	IEEE80211_CONF_CHANGE_QOS
+	*/ 
 
 	down(&hw_priv->scan.lock);
 	mutex_lock(&hw_priv->conf_mutex);
 	priv = __xrwl_hwpriv_to_vifpriv(hw_priv, hw_priv->scan.if_id);
-	/* TODO: IEEE80211_CONF_CHANGE_QOS */
-	/* TODO:COMBO:Change when support is available mac80211*/
+
 	if (changed & IEEE80211_CONF_CHANGE_POWER) {
 		/*hw_priv->output_power = conf->power_level;*/
 		hw_priv->output_power = 20;
@@ -416,12 +413,26 @@ int xradio_config(struct ieee80211_hw *dev, u32 changed)
 	    (hw_priv->channel != conf->chandef.chan)) {
 		/* Switch Channel commented for CC Mode */
 		struct ieee80211_channel *ch = conf->chandef.chan;
-		wiphy_debug(dev->wiphy, "Freq %d (wsm ch: %d).\n",
+		wiphy_debug(dev->wiphy, "Config Freq %d (wsm ch: %d).\n",
 		           ch->center_freq, ch->hw_value);
 		/* Earlier there was a call to __xradio_flush().
 		   Removed as deemed unnecessary */
 			hw_priv->channel = ch;
 			hw_priv->channel_changed = 1;
+	}
+
+	if (changed & IEEE80211_CONF_CHANGE_MONITOR) {
+		/* TBD: It looks like it's transparent
+		 * there's a monitor interface present -- use this
+		 * to determine for example whether to calculate
+		 * timestamps for packets or not, do not use instead
+		 * of filter flags!
+		 */
+	}
+
+	if (changed & IEEE80211_CONF_CHANGE_IDLE) {
+		/* TODO:COMBO: adjust to multi vif interface
+		 * IEEE80211_CONF_CHANGE_IDLE is still handled per xradio_vif*/
 	}
 
 	mutex_unlock(&hw_priv->conf_mutex);
@@ -675,7 +686,10 @@ int xradio_conf_tx(struct ieee80211_hw *dev, struct ieee80211_vif *vif,
 	/* To prevent re-applying PM request OID again and again*/
 	bool old_uapsdFlags;
 
-	wiphy_debug(dev->wiphy, "vif %d, configuring tx\n", priv->if_id);
+	/* MRK 5.5a - less verbose
+	wiphy_debug(dev->wiphy, "xradio conf tx, vif %d, queue %d, mode %d\n", 
+				priv->if_id, queue, priv->mode);
+	*/
 
 	if (WARN_ON(!priv))
 		return -EOPNOTSUPP;
@@ -715,7 +729,7 @@ int xradio_conf_tx(struct ieee80211_hw *dev, struct ieee80211_vif *vif,
 			if (!ret && priv->setbssparams_done &&
 			    (priv->join_status == XRADIO_JOIN_STATUS_STA) &&
 			    (old_uapsdFlags != priv->uapsd_info.uapsdFlags))
-				xradio_set_pm(priv, &priv->powersave_mode);
+				ret = xradio_set_pm(priv, &priv->powersave_mode); /* MRK 5.5a */
 		}
 	} else {
 		wiphy_err(dev->wiphy, "queue is to large!\n");

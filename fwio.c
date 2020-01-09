@@ -380,17 +380,19 @@ int xradio_load_firmware(struct xradio_common *hw_priv)
 		return ret;
 	}
 
-	//check hardware type and revision.
-	hw_priv->hw_type = xradio_get_hw_type(val32, &major_revision);
-	switch (hw_priv->hw_type) {
+	//check hardware type and revision. 
+	/* MRK 5.5 */
+	ret = xradio_get_hw_type(val32, &major_revision);
+	switch (ret) {
 	case HIF_HW_TYPE_XRADIO:
 		dev_dbg(hw_priv->pdev, "HW_TYPE_XRADIO detected.\n");
 		break;
 	default:
-		dev_dbg(hw_priv->pdev, "Unknown hardware: %d.\n",
-				hw_priv->hw_type);
+		dev_dbg(hw_priv->pdev, "Unknown hardware: %d.\n", ret);
 		return -ENOTSUPP;
 	}
+	hw_priv->hw_type = ret;
+
 	if (major_revision == 4) {
 		hw_priv->hw_revision = XR819_HW_REV0;
 		dev_dbg(hw_priv->pdev, "XRADIO_HW_REV 1.0 detected.\n");
