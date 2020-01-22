@@ -121,7 +121,7 @@ static int xradio_parse_sdd(struct xradio_common *hw_priv, u32 *dpll)
 		case SDD_PTA_CFG_ELT_ID:
 			hw_priv->conf_listen_interval = (*((u16 *)pElement->data+1) >> 7) & 0x1F;
 			hw_priv->is_BT_Present = true;
-			xradio_dbg(XRADIO_DBG_NIY, "PTA element found.Listen Interval %d\n",
+			xr_printk(XRADIO_DBG_NIY, "PTA element found. Listen Interval %d\n",
 			           hw_priv->conf_listen_interval);
 			break;
 		case SDD_REFERENCE_FREQUENCY_ELT_ID:
@@ -161,7 +161,7 @@ static int xradio_parse_sdd(struct xradio_common *hw_priv, u32 *dpll)
 				break;
 			default:
 				*dpll = DPLL_INIT_VAL_XRADIO;
-				xradio_dbg(XRADIO_DBG_WARN, "Unknown Reference clock frequency." 
+				xr_printk(XRADIO_DBG_WARN, "Unknown Reference clock frequency." 
 				           "Use default DPLL value=0x%08x.", DPLL_INIT_VAL_XRADIO);
 				break;
 			}
@@ -178,7 +178,7 @@ static int xradio_parse_sdd(struct xradio_common *hw_priv, u32 *dpll)
 	//
 	if (hw_priv->is_BT_Present == false) {
 		hw_priv->conf_listen_interval = 0;
-		xradio_dbg(XRADIO_DBG_NIY, "PTA element NOT found.\n");
+		xr_printk(XRADIO_DBG_NIY, "PTA element NOT found.\n");
 	}
 	return ret;
 }
