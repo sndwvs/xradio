@@ -108,6 +108,7 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 	};
 	int i;
 
+	scan_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	/* Scan when P2P_GO corrupt firmware MiniAP mode */
 	if (priv->join_status == XRADIO_JOIN_STATUS_AP) {
 		scan_printk(XRADIO_DBG_WARN,"%s, can't scan in AP mode!\n", __func__);
@@ -254,9 +255,8 @@ int xradio_hw_sched_scan_start(struct ieee80211_hw *hw,
 		.frame_type = WSM_FRAME_TYPE_PROBE_REQUEST,
 	};
 	int i;
-	
 
-	scan_printk(XRADIO_DBG_WARN, "Scheduled scan request-->.\n");
+	scan_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	if (!priv->vif)
 		return -EINVAL;
 
@@ -274,7 +274,7 @@ int xradio_hw_sched_scan_start(struct ieee80211_hw *hw,
 	scan_printk(XRADIO_DBG_NIY, "[SCAN] Scan request for %d SSIDs.\n", 
 	            req->n_ssids);
 
-	if (req->n_ssids > hw->wiphy->max_scan_ssids) [
+	if (req->n_ssids > hw->wiphy->max_scan_ssids) {
 		scan_printk(XRADIO_DBG_ERROR, "%s: ssids is too much(%d)\n", 
 		            __func__, req->n_ssids);
 		return -EINVAL;
@@ -620,6 +620,7 @@ void xradio_hw_sched_scan_stop(struct xradio_common *hw_priv)
 {
 	struct xradio_vif *priv = NULL;
 
+	scan_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	priv = xrwl_hwpriv_to_vifpriv(hw_priv,hw_priv->scan.if_id);
 	if (unlikely(!priv))
 		return;

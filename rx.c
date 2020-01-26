@@ -2,28 +2,12 @@
 
 #include "xradio.h"
 #include "rx.h"
+#include "tx.h"
 #include "ht.h"
 #include "p2p.h"
 #include "sta.h"
 #include "bh.h"
 #include "ap.h"
-
-	// MRK: added copy of this tx.c function here for testing, renamed _rx
-
-static void xradio_check_go_neg_conf_success_rx(struct xradio_common *hw_priv,
-						u8 *action)
-{
-	if (action[2] == 0x50 && action[3] == 0x6F && action[4] == 0x9A &&
-		action[5] == 0x09 && action[6] == 0x02) {
-		if(action[17] == 0) {
-			hw_priv->is_go_thru_go_neg = true;
-		}
-		else {
-			hw_priv->is_go_thru_go_neg = false;
-		}
-	}
-}
-
 
 static int xradio_handle_pspoll(struct xradio_vif *priv,
 				struct sk_buff *skb)
@@ -116,10 +100,10 @@ void xradio_rx_cb(struct xradio_vif *priv,
 	size_t hdrlen = 0;
 	u8   parse_iv_len = 0;
 
-	dev_dbg(hw_priv->pdev, "vif %d: rx, status %u flags 0x%.8x",
+	txrx_printk(XRADIO_DBG_MSG, "vif %d: rx, status %u flags 0x%.8x",
 			priv->if_id, arg->status, arg->flags);
 	if(ieee80211_is_deauth(frame->frame_control))
-		dev_dbg(hw_priv->pdev, "vif %d: deauth\n", priv->if_id);
+		txrx_printk(XRADIO_DBG_NIY, "vif %d: deauth\n", priv->if_id);
 
 	hdr->flag = 0;
 
@@ -136,7 +120,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 	if ((ieee80211_is_action(frame->frame_control))
 	    && (mgmt->u.action.category == WLAN_CATEGORY_PUBLIC)) {
 		u8 *action = (u8*)&mgmt->u.action.category;
-		xradio_check_go_neg_conf_success_rx(hw_priv, action);
+		xradio_check_go_neg_conf_success(hw_priv, action);
 	}
 #endif
 
@@ -180,22 +164,22 @@ void xradio_rx_cb(struct xradio_vif *priv,
 #endif
 	if (unlikely(arg->status)) {
 		if (arg->status == WSM_STATUS_MICFAILURE) {
-			dev_err(priv->hw_priv->pdev, "[RX] IF=%d, MIC failure.\n",
+			txrx_printk(XRADIO_DBG_ERROR, "[RX] IF=%d, MIC failure.\n",
 			            priv->if_id);
 			hdr->flag |= RX_FLAG_MMIC_ERROR;
 		} else if (arg->status == WSM_STATUS_NO_KEY_FOUND) {
-			dev_warn(priv->hw_priv->pdev, "received frame has no key status\n");
+			txrx_printk(XRADIO_DBG_WARN, "received frame has no key status\n");
 			goto drop;
 		} else {
-			dev_err(priv->hw_priv->pdev, "[RX] IF=%d, Receive failure: %d.\n",
+			txrx_printk(XRADIO_DBG_ERROR, "[RX] IF=%d, Receive failure: %d.\n",
 				priv->if_id, arg->status);
 			goto drop;
 		}
 	}
 
 	if (skb->len < sizeof(struct ieee80211_pspoll)) {
-		dev_err(priv->hw_priv->pdev, "Malformed SDU rx'ed. "
-		            "Size is lesser than IEEE header.\n");
+		txrx_printk(XRADIO_DBG_NIY, "Malformed SDU rx'ed. "
+		            "Size is smaller than IEEE header.\n");
 		goto drop;
 	}
 
@@ -273,8 +257,8 @@ void xradio_rx_cb(struct xradio_vif *priv,
 		}
 
 		if (skb->len < hdrlen + iv_len + icv_len) {
-			dev_err(priv->hw_priv->pdev, "Mailformed SDU rx'ed. "
-				"Size is lesser than crypto headers.\n");
+			txrx_printk(XRADIO_DBG_ERROR, "Mailformed SDU rx'ed. "
+				"Size is smaller than crypto headers.\n");
 			goto drop;
 		}
 
@@ -397,7 +381,7 @@ void xradio_rx_cb(struct xradio_vif *priv,
 		/* Double-check status with lock held */
 		if (entry->status == XRADIO_LINK_SOFT) {
 			skb_queue_tail(&entry->rx_queue, skb);
-			dev_warn(priv->hw_priv->pdev, "***skb_queue_tail\n");
+			txrx_printk(XRADIO_DBG_WARN, "***skb_queue_tail\n");
 		} else
 			ieee80211_rx_irqsafe(priv->hw, skb);
 		spin_unlock_bh(&priv->ps_state_lock);
@@ -409,6 +393,6 @@ void xradio_rx_cb(struct xradio_vif *priv,
 	return;
 
 drop:
-	dev_warn(priv->hw_priv->pdev, "dropped received frame\n");
+	txrx_printk(XRADIO_DBG_WARN, "dropped received frame\n");
 	return;
 }

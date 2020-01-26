@@ -57,6 +57,12 @@ void tx_policy_init(struct xradio_common *hw_priv);
 void tx_policy_upload_work(struct work_struct *work);
 
 /* ******************************************************************** */
+/* RX implementation							*/
+
+void xradio_check_go_neg_conf_success(struct xradio_common *hw_priv,
+						u8 *action);
+
+/* ******************************************************************** */
 /* TX implementation							*/
 
 u32 xradio_rate_mask_to_wsm(struct xradio_common *hw_priv,

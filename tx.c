@@ -69,7 +69,7 @@ static void tx_policy_dump(struct tx_policy *policy)
 		policy->defined);
 }
 
-static void xradio_check_go_neg_conf_success(struct xradio_common *hw_priv,
+void xradio_check_go_neg_conf_success(struct xradio_common *hw_priv,
 						u8 *action)
 {
 	if (action[2] == 0x50 && action[3] == 0x6F && action[4] == 0x9A &&
@@ -105,9 +105,8 @@ static void tx_policy_build(const struct xradio_common *hw_priv,
 	BUG_ON(rates[0].idx < 0);
 	memset(policy, 0, sizeof(*policy));
 
-
-	txrx_printk(XRADIO_DBG_NIY,"============================");
 #if 0
+	txrx_printk(XRADIO_DBG_NIY,"============================");
 	//debug yangfh
 	for (i = 0; i < count; ++i) {
 		if(rates[i].idx>=0) {
@@ -987,6 +986,7 @@ void xradio_tx(struct ieee80211_hw *dev, struct ieee80211_tx_control *control, s
 	struct ieee80211_hdr *frame = (struct ieee80211_hdr *)skb->data;
 	struct ieee80211_mgmt *mgmt = (struct ieee80211_mgmt *)skb->data;
 
+	/* txrx_printk(XRADIO_DBG_OPS, "%s\n", __func__); 	*/
 	if (!skb->data)
 		BUG_ON(1);
 
@@ -1086,10 +1086,10 @@ void xradio_tx(struct ieee80211_hw *dev, struct ieee80211_tx_control *control, s
 		goto drop;
 	}
 
-	dev_dbg(hw_priv->pdev, "vif %d: tx, %d bytes queue %d, link_id %d(%d).\n",
+	txrx_printk(XRADIO_DBG_MSG,"vif %d: tx, %d bytes queue %d, link_id %d(%d).\n",
 			priv->if_id, skb->len, t.queue, t.txpriv.link_id, t.txpriv.raw_link_id);
 	if(ieee80211_is_assoc_resp(frame->frame_control)){
-		dev_dbg(hw_priv->pdev, "vif %d: association response\n", priv->if_id);
+		txrx_printk(XRADIO_DBG_MSG,"vif %d: association response\n", priv->if_id);
 	}
 
 	xradio_tx_h_pm(priv, &t);
@@ -1158,7 +1158,7 @@ void xradio_tx(struct ieee80211_hw *dev, struct ieee80211_tx_control *control, s
 	return;
 
 drop:
-	dev_dbg(hw_priv->pdev, "dropped tx at line %d, fctl=0x%04x.\n", ret, frame->frame_control);
+	txrx_printk(XRADIO_DBG_MSG,"dropped tx at line %d, fctl=0x%04x.\n", ret, frame->frame_control);
 	xradio_skb_dtor(hw_priv, skb, &t.txpriv);
 	return;
 }
@@ -1188,7 +1188,7 @@ void xradio_tx_confirm_cb(struct xradio_common *hw_priv,
 		return;
 	}
 
-	dev_dbg(hw_priv->pdev, "vif %d: tx confirm status=%d, retry=%d, lastRate=%d\n",
+	txrx_printk(XRADIO_DBG_NIY,"vif %d: tx confirm status=%d, retry=%d, lastRate=%d\n",
 			priv->if_id, arg->status, arg->ackFailures, arg->txedRate);
 
 	if ((arg->status == WSM_REQUEUE) &&
@@ -1349,7 +1349,7 @@ void xradio_tx_confirm_cb(struct xradio_common *hw_priv,
 			} 
 		}
 
-		dev_dbg(hw_priv->pdev, "[TX policy] Ack: " \
+		txrx_printk(XRADIO_DBG_NIY,"[TX policy] Ack: " \
 		"%d:%d, %d:%d, %d:%d, %d:%d\n",
 		tx->status.rates[0].idx, tx->status.rates[0].count,
 		tx->status.rates[1].idx, tx->status.rates[1].count,

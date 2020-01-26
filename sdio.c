@@ -113,7 +113,7 @@ int sdio_pm(struct xradio_common *self, bool  suspend)
 		/* Notify SDIO that XRADIO will remain powered during suspend */
 		ret = sdio_set_host_pm_flags(self->sdio_func, MMC_PM_KEEP_POWER);
 		if (ret)
-			dev_dbg(&self->sdio_func->dev, "Error setting SDIO pm flags: %i\n", ret);
+			xr_printk(XRADIO_DBG_WARN, "SDIO: Error setting SDIO pm flags #%i\n", ret);
 	}
 
 	return ret;
@@ -140,13 +140,13 @@ static int xradio_probe_of(struct sdio_func *func)
 
 	irq = irq_of_parse_and_map(np, 0);
 	if (!irq) {
-		dev_err(dev, "No irq in platform data\n");
+		xr_printk(XRADIO_DBG_ERROR, "SDIO: No irq in platform data\n");
 		return -EINVAL;
 	}
 
 	ret = devm_request_irq(dev, irq, sdio_irq_handler, 0, "xradio", func);
 	if (ret) {
-		dev_err(dev, "Failed to request irq_wakeup.\n");
+		xr_printk(XRADIO_DBG_ERROR, "SDIO: Failed to request irq_wakeup.\n");
 		return -EINVAL;
 	}
 
@@ -157,12 +157,12 @@ static int xradio_probe_of(struct sdio_func *func)
 static int sdio_probe(struct sdio_func *func,
                       const struct sdio_device_id *id)
 {
-	dev_dbg(&func->dev, "XRadio Device:sdio clk=%d\n",
-	            func->card->host->ios.clock);
-	dev_dbg(&func->dev, "sdio func->class=%x\n", func->class);
-	dev_dbg(&func->dev, "sdio_vendor: 0x%04x\n", func->vendor);
-	dev_dbg(&func->dev, "sdio_device: 0x%04x\n", func->device);
-	dev_dbg(&func->dev, "Function#: 0x%04x\n",   func->num);
+	xr_printk(XRADIO_DBG_ALWY, "XR819 device discovered\n");
+	xr_printk(XRADIO_DBG_MSG, "SDIO: clock  = %d\n", func->card->host->ios.clock);
+	xr_printk(XRADIO_DBG_MSG, "SDIO: class  = %x\n", func->class);
+	xr_printk(XRADIO_DBG_MSG, "SDIO: vendor = 0x%04x\n", func->vendor);
+	xr_printk(XRADIO_DBG_MSG, "SDIO: device = 0x%04x\n", func->device);
+	xr_printk(XRADIO_DBG_MSG, "SDIO: fctn#  = 0x%04x\n", func->num);
 
 #if 0  //for odly and sdly debug.
 {
@@ -173,7 +173,7 @@ static int sdio_probe(struct sdio_func *func,
 	sdio_param &= ~(0xf<<20);
 	sdio_param |= s_dly<<20;
 	writel(sdio_param, __io_address(0x01c20088));
-	sbus_printk(XRADIO_DBG_ALWY, "%s: 0x01c20088=0x%08x\n", __func__, sdio_param);
+	xr_printk(XRADIO_DBG_ALWY, "%s: 0x01c20088=0x%08x\n", __func__, sdio_param);
 }
 #endif
 

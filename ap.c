@@ -52,6 +52,8 @@ int xradio_sta_add(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	struct xradio_common *hw_priv = hw->priv;
 #endif
 
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
+
 	if (priv->mode != NL80211_IFTYPE_AP) {
 		return 0;
 	}
@@ -60,7 +62,7 @@ int xradio_sta_add(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	sta_priv->link_id = xradio_find_link_id(priv, sta->addr);
 	if (WARN_ON(!sta_priv->link_id)) {
 		/* Impossible error */
-		wiphy_debug(hw->wiphy, "No more link IDs available.\n");
+		ap_printk(XRADIO_DBG_MSG,"No more link IDs available.\n");
 		return -ENOENT;
 	}
 
@@ -99,8 +101,10 @@ int xradio_sta_remove(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	struct xradio_vif *priv = xrwl_get_vif_from_ieee80211(vif);
 	struct xradio_link_entry *entry;
 
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
+
 	if (priv->mode != NL80211_IFTYPE_AP || !sta_priv->link_id) {
-		wiphy_warn(hw->wiphy, "no station to remove\n");
+		ap_printk(XRADIO_DBG_MSG,"no station to remove\n");
 		return 0;
 	}
 
@@ -139,6 +143,7 @@ static void __xradio_sta_notify(struct xradio_vif *priv,
 	struct xradio_common *hw_priv = xrwl_vifpriv_to_hwpriv(priv);
 	u32 bit, prev;
 
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	/* Zero link id means "for all link IDs" */
 	if (link_id)
 		bit = BIT(link_id);
@@ -209,7 +214,8 @@ static int xradio_set_tim_impl(struct xradio_vif *priv, bool aid0_bit_set)
 		.count = 1,
 	};
 	u16 tim_offset, tim_length;
-	ap_printk(XRADIO_DBG_TRC,"%s\n", __FUNCTION__);
+
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	ap_printk(XRADIO_DBG_MSG, "%s mcast: %s.\n", __func__, 
 	          aid0_bit_set ? "ena" : "dis");
 
@@ -357,7 +363,10 @@ void xradio_bss_info_changed(struct ieee80211_hw *dev,
 	struct xradio_common *hw_priv = dev->priv;
 	struct xradio_vif *priv = xrwl_get_vif_from_ieee80211(vif);
 
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
+
 	mutex_lock(&hw_priv->conf_mutex);
+
 	if (changed & BSS_CHANGED_BSSID) {
 		memcpy(priv->bssid, info->bssid, ETH_ALEN);
 		xradio_setup_mac_pvif(priv);
@@ -525,17 +534,17 @@ void xradio_bss_info_changed(struct ieee80211_hw *dev,
 			if (is_combo > 1) {
 				hw_priv->vif0_throttle = XRWL_HOST_VIF0_11BG_THROTTLE;
 				hw_priv->vif1_throttle = XRWL_HOST_VIF1_11BG_THROTTLE;
-				ap_printk(XRADIO_DBG_WARN, "%sASSOC is_combo %d\n", 
+				ap_printk(XRADIO_DBG_NIY, "%sASSOC is_combo %d\n", 
 				         (priv->join_status == XRADIO_JOIN_STATUS_STA)?"[STA] ":"",
 				          hw_priv->vif0_throttle);
 			} else if ((priv->join_status == XRADIO_JOIN_STATUS_STA) && priv->htcap) {
 				hw_priv->vif0_throttle = XRWL_HOST_VIF0_11N_THROTTLE;
 				hw_priv->vif1_throttle = XRWL_HOST_VIF1_11N_THROTTLE;
-				ap_printk(XRADIO_DBG_WARN, "[STA] ASSOC HTCAP 11N %d\n",hw_priv->vif0_throttle);
+				ap_printk(XRADIO_DBG_NIY, "[STA] ASSOC HTCAP 11N %d\n",hw_priv->vif0_throttle);
 			} else {
 				hw_priv->vif0_throttle = XRWL_HOST_VIF0_11BG_THROTTLE;
 				hw_priv->vif1_throttle = XRWL_HOST_VIF1_11BG_THROTTLE;
-				ap_printk(XRADIO_DBG_WARN, "ASSOC not_combo 11BG %d\n",hw_priv->vif0_throttle);
+				ap_printk(XRADIO_DBG_NIY, "ASSOC not_combo 11BG %d\n",hw_priv->vif0_throttle);
 			}
 
 			if (sta) {
@@ -938,6 +947,8 @@ int xradio_ampdu_action(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 	 * FW generates the ADDBA Response on its own.*/
 	int ret;
 
+	ap_printk(XRADIO_DBG_OPS, "%s\n", __func__);
+
 	switch (params->action) {
 	case IEEE80211_AMPDU_RX_START:
 	case IEEE80211_AMPDU_RX_STOP:
@@ -1268,8 +1279,6 @@ static int xradio_start_ap(struct xradio_vif *priv)
 	};
 #endif
 
-	ap_printk(XRADIO_DBG_TRC,"%s\n", __FUNCTION__);
-
 	if (priv->if_id)
 		start.mode |= WSM_FLAG_MAC_INSTANCE_1;
 	else
@@ -1350,7 +1359,7 @@ static int xradio_start_ap(struct xradio_vif *priv)
 	WARN_ON(wsm_set_operational_mode(hw_priv, &defaultoperationalmode, priv->if_id));
 	hw_priv->vif0_throttle = XRWL_HOST_VIF0_11BG_THROTTLE;
 	hw_priv->vif1_throttle = XRWL_HOST_VIF1_11BG_THROTTLE;
-	ap_printk(XRADIO_DBG_WARN, "vif%d, AP/GO mode THROTTLE=%d\n", priv->if_id,
+	ap_printk(XRADIO_DBG_NIY, "vif%d, AP/GO mode THROTTLE=%d\n", priv->if_id,
 	          priv->if_id==0?hw_priv->vif0_throttle:hw_priv->vif1_throttle);
 	return ret;
 }
@@ -1363,7 +1372,6 @@ static int xradio_update_beaconing(struct xradio_vif *priv)
 		.link_id = 0,
 		.reset_statistics = true,
 	};
-	ap_printk(XRADIO_DBG_TRC,"%s\n", __FUNCTION__);
 
 	if (priv->mode == NL80211_IFTYPE_AP) {
 		/* TODO: check if changed channel, band */
