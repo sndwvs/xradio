@@ -477,10 +477,11 @@ void xradio_scan_work(struct work_struct *work)
 			scan.scanType = WSM_SCAN_TYPE_BACKGROUND;
 			scan.scanFlags = WSM_SCAN_FLAG_FORCE_BACKGROUND;
 		}
-		scan.ch = kzalloc(sizeof(struct wsm_scan_ch[it - hw_priv->scan.curr]), GFP_KERNEL);
+		/* MRK C90 */
+		scan.ch = kcalloc(scan.numOfChannels, sizeof(struct wsm_scan_ch), GFP_KERNEL);
 		if (!scan.ch) {
 			hw_priv->scan.status = -ENOMEM;
-			scan_printk(XRADIO_DBG_ERROR, "xr_kzalloc wsm_scan_ch failed.\n");
+			scan_printk(XRADIO_DBG_ERROR, "kcalloc for wsm_scan_ch failed.\n");
 			goto fail;
 		}
 		maxChannelTime = (scan.numOfSSIDs * scan.numOfProbeRequests *ProbeRequestTime) + 
@@ -578,7 +579,8 @@ void xradio_sched_scan_work(struct work_struct *work)
 	memcpy(scan_ssid.ssid, priv->ssid, priv->ssid_length);
 	scan.ssids = &scan_ssid;
 
-	scan.ch = xr_kzalloc(sizeof(struct wsm_scan_ch[scan.numOfChannels]), false);
+	/* MRK C90 */
+	scan.ch = kcalloc(scan.numOfChannels, sizeof(struct wsm_scan_ch), false);
 	if (!scan.ch) {
 		scan_printk(XRADIO_DBG_ERROR, "xr_kzalloc wsm_scan_ch failed.\n");
 		hw_priv->scan.status = -ENOMEM;

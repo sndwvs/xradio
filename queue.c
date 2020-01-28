@@ -93,9 +93,12 @@ static void xradio_queue_register_post_gc(struct list_head *gc_list,
 				     struct xradio_queue_item *item)
 {
 	struct xradio_queue_item *gc_item;
-	gc_item = kmalloc(sizeof(struct xradio_queue_item), GFP_KERNEL);
+	
+	/* MRK C90 */
+	gc_item = kmemdup(item, sizeof(struct xradio_queue_item), GFP_ATOMIC);
+	/* gc_item = kmalloc(sizeof(struct xradio_queue_item), GFP_KERNEL);	MRK C90 */
 	BUG_ON(!gc_item);
-	memcpy(gc_item, item, sizeof(struct xradio_queue_item));
+	/* memcpy(gc_item, item, sizeof(struct xradio_queue_item));		MRK C90 */
 	list_add_tail(&gc_item->head, gc_list);
 }
 
@@ -182,7 +185,8 @@ int xradio_queue_stats_init(struct xradio_queue_stats *stats,
 	spin_lock_init(&stats->lock);
 	init_waitqueue_head(&stats->wait_link_id_empty);
 	for (i = 0; i < XRWL_MAX_VIFS; i++) {
-		stats->link_map_cache[i] = kzalloc(sizeof(int[map_capacity]), GFP_KERNEL);
+		/* MRK C90 */
+		stats->link_map_cache[i] = kzalloc(sizeof(int) * map_capacity, GFP_KERNEL);
 		if (!stats->link_map_cache[i]) {
 			for (; i >= 0; i--)
 				kfree(stats->link_map_cache[i]);
@@ -216,10 +220,10 @@ int xradio_queue_init(struct xradio_queue *queue,
 	                         GFP_KERNEL);
 	if (!queue->pool)
 		return -ENOMEM;
-
+	/* MRK C90 */
 	for (i = 0; i < XRWL_MAX_VIFS; i++) {
 		queue->link_map_cache[i] =
-				kzalloc(sizeof(int[stats->map_capacity]), GFP_KERNEL);
+				kzalloc(sizeof(int) * stats->map_capacity, GFP_KERNEL);
 		if (!queue->link_map_cache[i]) {
 			for (; i >= 0; i--)
 				kfree(queue->link_map_cache[i]);
