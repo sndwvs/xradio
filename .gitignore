@@ -5,4 +5,5 @@ modules.order
 .tmp_versions
 *.ko
 *.mod.c
-
+firmware/
+dts/
