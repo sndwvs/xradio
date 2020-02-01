@@ -101,7 +101,7 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 	struct wsm_template_frame frame = {
 		.frame_type = WSM_FRAME_TYPE_PROBE_REQUEST,
 	};
-	int i;
+	int i, ret;
 
 	scan_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 	/* Scan when P2P_GO corrupt firmware MiniAP mode */
@@ -141,10 +141,14 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 	}
 
 	if (req->n_ssids > hw->wiphy->max_scan_ssids){
-		scan_printk(XRADIO_DBG_ERROR, "%s: ssids is too much(%d)\n", 
+		scan_printk(XRADIO_DBG_ERROR, "%s: too many SSIDs (%d)\n", 
 		            __func__, req->n_ssids);
 		return -EINVAL;
 	}
+
+	/* will be unlocked in xradio_scan_work() */
+	down(&hw_priv->scan.lock);
+	mutex_lock(&hw_priv->conf_mutex);
 
 	/* TODO by Icenowy: so strange function call */
 	frame.skb = ieee80211_probereq_get(hw, vif->addr, NULL, 0, 0);
@@ -188,19 +192,14 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 	hw_priv->num_scanchannels = hw_priv->num_2g_channels + hw_priv->num_5g_channels;
 #endif /*ROAM_OFFLOAD*/
 
-	/* will be unlocked in xradio_scan_work() */
-	down(&hw_priv->scan.lock);
-	mutex_lock(&hw_priv->conf_mutex);
-
 	if (frame.skb) {
-		int ret = 0;
 		if (priv->if_id == 0)
 			xradio_remove_wps_p2p_ie(&frame);
 		ret = wsm_set_template_frame(hw_priv, &frame, priv->if_id);
 		if (ret) {
+			dev_kfree_skb(frame.skb);
 			mutex_unlock(&hw_priv->conf_mutex);
 			up(&hw_priv->scan.lock);
-			dev_kfree_skb(frame.skb);
 			scan_printk(XRADIO_DBG_ERROR, "%s: wsm_set_template_frame failed: %d.\n",
 			             __func__, ret);
 			return ret;
@@ -229,10 +228,9 @@ int xradio_hw_scan(struct ieee80211_hw *hw,
 		++hw_priv->scan.n_ssids;
 	}
 
-	mutex_unlock(&hw_priv->conf_mutex);
-
 	/* MRK 5.5a */
 	dev_kfree_skb(frame.skb);
+	mutex_unlock(&hw_priv->conf_mutex);
 	queue_work(hw_priv->workqueue, &hw_priv->scan.work);
 
 	return 0;

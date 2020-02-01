@@ -21,6 +21,7 @@ Cross-compilations allows building a complete linux system with custom drivers o
 
 The **armbian project** (https://www.armbian.com/) provides an ideal build environment for building linux on arm based devices:
 https://github.com/armbian/build
+Armbian has built-in xradio-support.
 
 ## Building on any host system ##
 
@@ -37,7 +38,7 @@ For info on Toolchains see http://linux-sunxi.org/Toolchain.
 
 Kernel headers have to be installed for building kernel modules on a device. Make sure that the xradio-chip is supported by the device tree. 
 
-## Option 2: the quick way ##
+## Option 1: the quick way ##
 
 Clone the driver code directly on the device and use the provided script to compile and install the driver. 
 
@@ -54,7 +55,7 @@ sudo reboot
 ```
 
 
-## Option 3: step-by-step ##
+## Option 2: step-by-step ##
 
 First clone driver code:
 
