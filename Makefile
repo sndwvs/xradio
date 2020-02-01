@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 # Standalone Makefile - uncomment for out-of-tree compilation
-#CONFIG_WLAN_VENDOR_XRADIO := m
-#CONFIG_XRADIO_USE_EXTENSIONS := y
-#CONFIG_XRADIO_WAPI_SUPPORT := n
+CONFIG_WLAN_VENDOR_XRADIO := m
+ccflags-y += -DCONFIG_XRADIO_USE_EXTENSIONS
+#ccflags-y += -DCONFIG_XRADIO_WAPI_SUPPORT
 
 # Kernel part
 
@@ -28,29 +28,33 @@ xradio_wlan-objs := \
 	ht.o \
 	p2p.o
 
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DMCAST_FWDING
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DXRADIO_SUSPEND_RESUME_FILTER_ENABLE
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DAP_AGGREGATE_FW_FIX
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DAP_HT_CAP_UPDATE
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DAP_HT_COMPAT_FIX
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DCONFIG_XRADIO_DUMP_ON_ERROR
+# ccflags-y += -DMCAST_FWDING
+# ccflags-y += -DXRADIO_SUSPEND_RESUME_FILTER_ENABLE
+# ccflags-y += -DAP_AGGREGATE_FW_FIX
 
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DCONFIG_XRADIO_SUSPEND_POWER_OFF
+# ccflags-y += -DAP_HT_CAP_UPDATE
+# ccflags-y += -DAP_HT_COMPAT_FIX
 
-# Extra IE for probe response from upper layer is needed in P2P GO
-# For offloading probe response to FW, the extra IE must be included
-# in the probe response template
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DPROBE_RESP_EXTRA_IE
+# # Extra IE for probe response from upper layer is needed in P2P GO
+# # For offloading probe response to FW, the extra IE must be included
+# # in the probe response template. Required for hidden SSID.
+# ccflags-y += -DPROBE_RESP_EXTRA_IE
 
-# Modified by wzw
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DTES_P2P_0002_ROC_RESTART
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DTES_P2P_000B_EXTEND_INACTIVITY_CNT
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DTES_P2P_000B_DISABLE_EAPOL_FILTER
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DXRADIO_USE_LONG_DTIM_PERIOD
-ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DXRADIO_USE_LONG_KEEP_ALIVE_PERIOD
+# # Modified for P2P stability.
+# ccflags-y += -DTES_P2P_0002_ROC_RESTART
+# ccflags-y += -DTES_P2P_000B_EXTEND_INACTIVITY_CNT
+# ccflags-y += -DTES_P2P_000B_DISABLE_EAPOL_FILTER
 
-#ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DDEBUG
-#ccflags-$(CONFIG_WLAN_VENDOR_XRADIO) += -DXRADIO_DISABLE_HW_CRYPTO
+# # Modified for power save.
+# ccflags-y += -DCONFIG_PM
+# ccflags-y += -DCONFIG_XRADIO_SUSPEND_POWER_OFF
+# ccflags-y += -DXRADIO_USE_LONG_DTIM_PERIOD
+# ccflags-y += -DXRADIO_USE_LONG_KEEP_ALIVE_PERIOD
 
-ldflags-$(CONFIG_WLAN_VENDOR_XRADIO) += --strip-debug
+# # Not functional at this point
+# #ccflags-y += -DROAM_OFFLOAD
+
+# #ccflags-y += -DDEBUG
+
+ldflags-y += --strip-debug
 

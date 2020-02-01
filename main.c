@@ -536,7 +536,7 @@ int xradio_core_init(struct sdio_func* func)
 		dev_dbg(hw_priv->pdev, "xradio_pm_init failed(%d).\n", err);
 		goto err2;
 	}
-#endif
+#endif /* CONFIG_PM */
 	/* Register bh thread*/
 	err = xradio_register_bh(hw_priv);
 	if (err) {

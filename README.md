@@ -1,24 +1,45 @@
-# Driver for the Allwinner XRadio XR819 wifi chip 
+# Driver for the Allwinner XRadio XR819 wifi chip #
 
-This is an experimental wifi driver for devices using the XRADIO XR819 wifi chip - such as the Orange Pi Zero, the Nanopi Duo, or the Sunvell R69. This port is based on `https://github.com/fifteenhex/xradio`.
+This is an experimental wifi driver for the XRADIO XR819 wifi chip - as used in Single Board Computers (SBCs) such as the *Orange Pi Zero* or the *Nanopi Duo*, and TV-boxes like the the *Sunvell R69*. 
 
-Tested kernel version: 4.14 - 5.5
+Tested kernel versions: `4.14 - 5.5`
 
-Standard client station mode seems to work, but connecing to open APs does not.
-Master (AP) mode works with WPA/WPA2 enabled works.
-Don't expect throughputs substantially exceeding 25 Mbit/s, depending on the device.
+**STA-Mode** (standard client station) and **AP-Mode** (device as access point) using **WPA2** work. Hidden and open APs as well as WEP- or WPA1-encrypted connection are not supported. P2P has not been tested. 
 
-# Firmware
+# Firmware and dts-files #
 
-Get firmware binaries from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (for armbian: `/lib/firmware/xr819/`)
+Get **firmware binaries** from somewhere, e.g. https://github.com/karabek/xradio/tree/master/firmware (`boot_xr819.bin`, `fw_xr819.bin`, `sdd_xr819.bin`) and place into your firmware folder (e.g. `/lib/firmware/xr819/`)
 
-# Building an "out-of-tree" driver on the device
+Example **device tree** files (for kernel version 5.5) can be found here:
+https://github.com/karabek/xradio/blob/master/dts/.
 
-Make sure kernel headers are installed.
+# Building on a host system #
 
-Option 1: the quick way
+Cross-compilations allows building a complete linux system with custom drivers on a suitable host system (e.g. your PC).
 
-Clone the driver code directly on the device and use the provided script to compile and install the driver. This only works with armbian (www.armbian.com).
+## Building with armbian ##
+
+The **armbian project** (https://www.armbian.com/) provides an ideal build environment for building linux on arm based devices:
+https://github.com/armbian/build
+
+## Building on any host system ##
+
+To cross-compile and build the kernel module yourself on a host system get a suitable toolchain and try something like this:
+
+```
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$PWD modules
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$PWD INSTALL_MOD_PATH=<PATH TO INSTALL MODULE> modules_install
+```
+
+For info on Toolchains see http://linux-sunxi.org/Toolchain.
+
+# Building an "out-of-tree" driver on the device #
+
+Kernel headers have to be installed for building kernel modules on a device. Make sure that the xradio-chip is supported by the device tree. 
+
+## Option 2: the quick way ##
+
+Clone the driver code directly on the device and use the provided script to compile and install the driver. 
 
 ```
 git clone https://github.com/karabek/xradio.git
@@ -26,70 +47,53 @@ cd xradio
 sudo ./xr-install.sh
 ```
 
-Use armbians armbian-add-overlay command to install a device-specific extension of the device tree (example here for the OrangePi Zero) and reboot:
+Reboot the device.
 
 ```
-armbian-add-overlay dts/xradio-overlay-xxxx.dts
-reboot
+sudo reboot
 ```
 
 
-Option 2: step-by-step
+## Option 3: step-by-step ##
 
-First clone driver code and compile locally on the device:
+First clone driver code:
 
 ```
 git clone https://github.com/karabek/xradio.git
 cd xradio
 ```
 
-Uncomment line 4-6 of Makefile:
+Uncomment line 4 and 5 of Makefile:
 ```
 	CONFIG_WLAN_VENDOR_XRADIO := m
-	CONFIG_XRADIO_USE_EXTENSIONS := y
-	CONFIG_XRADIO_WAPI_SUPPORT := n
+	ccflags-y += -DCONFIG_XRADIO_USE_EXTENSIONS
+	# ccflags-y += -DCONFIG_XRADIO_WAPI_SUPPORT
 ```
 
-Make kernel module:
+Compile the kernel module:
 
 ```
 make  -C /lib/modules/$(uname -r)/build M=$PWD modules
 ll *.ko
 ```
 
-You should see the compiled module (xradio_wlan.ko). Now copy the module to the correct driver directory:
+You should see the compiled module (xradio_wlan.ko) in your source directory. 
+Now copy the module to the correct driver directory and make module dependencies available:
 
 ```
 mkdir /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio
 cp xradio_wlan.ko /lib/modules/$(uname -r)/kernel/drivers/net/wireless/xradio/
-```
-
-Add xradio_wlan to the modules-file and make module dependencies available:
-
-```
-echo -e "xradio_wlan" >> /etc/modules
 depmod
-```
-
-Make sure that the xradio-chip is supported by the device tree. For armbian (www.armbian.com) this can be achieved by loading a dts-overlay:
-
-```
-armbian-add-overlay dts/xradio-mrk1.dts
 ```
 
 Finally reboot the device.
 
-# Building a kernel on a host system
-
-To cross-compile and build the kernel module on a host system try something like this:
-
 ```
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$PWD modules
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C <PATH TO YOUR LINUX SRC> M=$PWD INSTALL_MOD_PATH=<PATH TO INSTALL MODULE> modules_install
+sudo reboot
 ```
 
-An example device tree file (for the Orange Pi Zero) can be found here
-https://github.com/karabek/xradio/blob/master/dts/sun8i-h2-plus-orangepi-zero.dts
+
+ :black_small_square:  :black_small_square:  :black_small_square:
 
 
 

@@ -49,10 +49,6 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
                    struct ieee80211_vif *vif, struct ieee80211_sta *sta,
                    struct ieee80211_key_conf *key)
 {
-#ifdef XRADIO_DISABLE_HW_CRYPTO
-	sta_printk(XRADIO_DBG_NIY, "hw crypto is disabled, ignoring key request\n");
-	return -EOPNOTSUPP;
-#else
 	int ret = -EOPNOTSUPP;
 	struct xradio_common *hw_priv = dev->priv;
 	struct xradio_vif *priv = xrwl_get_vif_from_ieee80211(vif);
@@ -190,5 +186,4 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
 finally:
 	mutex_unlock(&hw_priv->conf_mutex);
 	return ret;
-#endif // XRADIO_DISABLE_HW_CRYPTO
 }

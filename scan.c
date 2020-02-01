@@ -54,13 +54,8 @@ static void xradio_remove_wps_p2p_ie(struct wsm_template_frame *frame)
 static int xradio_scan_start(struct xradio_vif *priv, struct wsm_scan *scan)
 {
 	int ret, i;
-#ifdef FPGA_SETUP
 	int tmo = 5000;
-#else
-	int tmo = 5000;
-#endif
 	struct xradio_common *hw_priv = xrwl_vifpriv_to_hwpriv(priv);
-
 
 	for (i = 0; i < scan->numOfChannels; ++i)
 		tmo += scan->ch[i].maxChannelTime + 10;

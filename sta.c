@@ -32,8 +32,12 @@
 #include "net/mac80211.h"
 
 #ifdef TES_P2P_0002_ROC_RESTART
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+#include <linux/ktime.h>
+#else
 #include <linux/time.h>
 #endif
+#endif /* TES_P2P_0002_ROC_RESTART */
 
 #define WEP_ENCRYPT_HDR_SIZE    4
 #define WEP_ENCRYPT_TAIL_SIZE   4
@@ -942,18 +946,27 @@ int xradio_remain_on_channel(struct ieee80211_hw *hw,
 	struct xradio_vif *priv = NULL;
 	int i = 0;
 	int if_id;
-#ifdef	TES_P2P_0002_ROC_RESTART
+#ifdef TES_P2P_0002_ROC_RESTART
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+	struct timespec TES_P2P_0002_tmval;
+#else
 	struct timeval TES_P2P_0002_tmval;
 #endif
+#endif /* TES_P2P_0002_ROC_RESTART */
 
 	sta_printk(XRADIO_DBG_OPS, "%s\n", __func__);
 
-#ifdef	TES_P2P_0002_ROC_RESTART
+#ifdef TES_P2P_0002_ROC_RESTART
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+	getnstimeofday(&TES_P2P_0002_tmval);
+	TES_P2P_0002_roc_usec = (s32)TES_P2P_0002_tmval.tv_nsec/1000;
+#else
 	do_gettimeofday(&TES_P2P_0002_tmval);
-	TES_P2P_0002_roc_dur  = (s32)duration;
-	TES_P2P_0002_roc_sec  = (s32)TES_P2P_0002_tmval.tv_sec;
 	TES_P2P_0002_roc_usec = (s32)TES_P2P_0002_tmval.tv_usec;
 #endif
+	TES_P2P_0002_roc_dur  = (s32)duration;
+	TES_P2P_0002_roc_sec  = (s32)TES_P2P_0002_tmval.tv_sec;
+#endif /* TES_P2P_0002_ROC_RESTART */
 
 	down(&hw_priv->scan.lock);
 	mutex_lock(&hw_priv->conf_mutex);
