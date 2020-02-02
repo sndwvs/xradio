@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
-# Standalone Makefile - uncomment for out-of-tree compilation
-CONFIG_WLAN_VENDOR_XRADIO := m
-ccflags-y += -DCONFIG_XRADIO_USE_EXTENSIONS
-#ccflags-y += -DCONFIG_XRADIO_WAPI_SUPPORT
+# # Standalone Makefile - uncomment for out-of-tree compilation
+# CONFIG_WLAN_VENDOR_XRADIO := m
+# ccflags-y += -DCONFIG_XRADIO_USE_EXTENSIONS
+# ccflags-y += -DCONFIG_XRADIO_WAPI_SUPPORT
 
 # Kernel part
 
