@@ -2,7 +2,7 @@
 
 This is an experimental wifi driver for the XRADIO XR819 wifi chip - as used in Single Board Computers (SBCs) such as the *Orange Pi Zero* or the *Nanopi Duo*, and TV-boxes like the the *Sunvell R69*. 
 
-Tested kernel versions: `4.14 - 5.5`
+Tested kernel versions: `4.14 - 5.6`
 
 **STA-Mode** (standard client station) and **AP-Mode** (device as access point) using **WPA2** work. Hidden and open APs as well as WEP- or WPA1-encrypted connection are not supported. P2P has not been tested. 
 
