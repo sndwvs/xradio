@@ -704,6 +704,9 @@ void xradio_configure_filter(struct ieee80211_hw *hw,
 }
 
 int xradio_conf_tx(struct ieee80211_hw *dev, struct ieee80211_vif *vif,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0))
+                  unsigned int link_id,
+#endif
                    u16 queue, const struct ieee80211_tx_queue_params *params)
 {
 	struct xradio_common *hw_priv = dev->priv;

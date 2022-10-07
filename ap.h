@@ -9,6 +9,8 @@
  * published by the Free Software Foundation.
  */
 
+#include <linux/version.h>
+
 #ifndef AP_H_INCLUDED
 #define AP_H_INCLUDED
 
@@ -32,7 +34,12 @@ void xradio_sta_notify(struct ieee80211_hw *dev, struct ieee80211_vif *vif,
 void xradio_bss_info_changed(struct ieee80211_hw *dev,
 			     struct ieee80211_vif *vif,
 			     struct ieee80211_bss_conf *info,
-			     u32 changed);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0))
+			     u64 changed
+#else
+			     u32 changed
+#endif
+			     );
 int xradio_ampdu_action(struct ieee80211_hw *hw,
 			struct ieee80211_vif *vif,
 			struct ieee80211_ampdu_params *params);

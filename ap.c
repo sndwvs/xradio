@@ -358,7 +358,12 @@ static int xradio_set_btcoexinfo(struct xradio_vif *priv)
 void xradio_bss_info_changed(struct ieee80211_hw *dev,
 			     struct ieee80211_vif *vif,
 			     struct ieee80211_bss_conf *info,
-			     u32 changed)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0))
+			     u64 changed
+#else
+			     u32 changed
+#endif
+			     )
 {
 	struct xradio_common *hw_priv = dev->priv;
 	struct xradio_vif *priv = xrwl_get_vif_from_ieee80211(vif);
